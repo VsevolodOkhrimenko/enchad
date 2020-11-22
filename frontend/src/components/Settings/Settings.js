@@ -20,6 +20,7 @@ import { enableSettingsSidebar, enableKeysModal } from 'utils/common/actions'
 import { resetAuthToken } from 'utils/auth/actions'
 import { resetMessages } from 'utils/messaging/actions'
 import { resetKeys } from 'utils/encryption/actions'
+import { checkMobile } from 'helpers/common'
 import ShowUserInfo from 'components/ShowUserInfo'
 import ExportPrivateKey from 'components/ExportPrivateKey'
 import ChangePassword from 'components/ChangePassword'
@@ -30,6 +31,7 @@ import history from 'browserHistory'
 const Settings = () => {
   const { thread_id } = useParams()
   const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent)
+  const isMobile = checkMobile()
   const dispatch = useDispatch()
   const showSettingsSidebar = useSelector(state => state.common.showSettingsSidebar)
   const activePrivateKey = useSelector(state => state.encryption.activePrivateKey)
@@ -38,7 +40,7 @@ const Settings = () => {
     <SwipeableDrawer
       anchor="right"
       open={showSettingsSidebar}
-      variant="persistent"
+      variant={isMobile ? 'temporary' : 'persistent'}
       onClose={() => dispatch(enableSettingsSidebar(false))}
       onOpen={() => dispatch(enableSettingsSidebar(true))}
       disableBackdropTransition={!iOS}

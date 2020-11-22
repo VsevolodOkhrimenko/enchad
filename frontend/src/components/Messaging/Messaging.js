@@ -8,6 +8,8 @@ import {
 } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import DocumentTitle from 'react-document-title'
+import { getItemById } from 'helpers/common'
 import {
   getMessages,
   resetMessages,
@@ -24,7 +26,9 @@ import SendMessage from 'components/SendMessage'
 
 const Messaging = (props) => {
   const dispatch = useDispatch()
+  const { thread_id } = useParams()
   const messages = useSelector(state => state.messaging.messages)
+  const threads = useSelector(state => state.messaging.threads)
   const unreadsByThread = useSelector(state => state.messaging.unreadsByThread)
   const nextUrl = useSelector(state => state.messaging.nextUrl)
   const activePublicKey = useSelector(state => state.encryption.activePublicKey)
@@ -33,7 +37,6 @@ const Messaging = (props) => {
   const isLoadingMessages = useSelector(state => state.messaging.isLoadingMessages)
   const keysModalIsVisible = useSelector(state => state.common.keysModalIsVisible)
   const userId = useSelector(state => state.auth.userId)
-  const { thread_id } = useParams()
 
   // useEffect(() => {
   //   dispatch(setEncryptedPrivateKey(thread_id))
@@ -78,9 +81,22 @@ const Messaging = (props) => {
     dispatch(enableKeysModal(true))
   }
 
+  const getOpponentUsername = () => {
+    const activeThread = getItemById(threads, thread_id)
+    console.log(userId)
+    if (activeThread) {
+      return activeThread['opponent']['id'] === userId ?
+        activeThread['owner']['username'] : activeThread['opponent']['username']
+    }
+    return ''
+  }
+
+  getOpponentUsername()
+
 
   return (
     <div className="full-height-component">
+      <DocumentTitle title={`Chat with ${getOpponentUsername()} | EnChad`} />
       <div
         id="threadContainer"
         className={`${activeOpponentPublicKey && activePublicKey && encryptedPrivateKey ? 'ready' : ''}`}

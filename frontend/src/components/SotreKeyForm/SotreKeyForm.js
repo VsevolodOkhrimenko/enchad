@@ -12,7 +12,8 @@ import {
 import { ExpandMore, Visibility, VisibilityOff } from '@material-ui/icons'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { enableKeysModal } from 'utils/common/actions'
+import { checkMobile } from 'helpers/common'
+import { enableKeysModal, enableThreadsSidebar } from 'utils/common/actions'
 import { updateKeyPair } from 'utils/messaging/actions'
 import Loader from 'components/Loader'
 import Config from 'config'
@@ -25,12 +26,13 @@ const SotreKeyForm = (props) => {
     threadId
   } = props
 
+  const dispatch = useDispatch()
+  const isMobile = checkMobile()
   const encryptionError = useSelector(state => state.encryption.encryptionError)
   const encryptionLoading = useSelector(state => state.encryption.encryptionLoading)
   const [passwordError, setPasswordError] = useState(null)
   const [showPassword1, setShowPassword1] = useState(false)
   const [showPassword2, setShowPassword2] = useState(false)
-  const dispatch = useDispatch()
 
   const storeKeySubmit = (event) => {
     event.preventDefault()
@@ -44,7 +46,13 @@ const SotreKeyForm = (props) => {
     } else if (password1.length < passwordMinSize) {
       setPasswordError(`Password minimum length: ${passwordMinSize} symbols`)
     } else {
-      dispatch(updateKeyPair(threadId, password1, privateKey, () => dispatch(enableKeysModal(false))))
+      dispatch(updateKeyPair(
+        threadId,
+        password1,
+        privateKey,
+        () => dispatch(enableKeysModal(
+          false,
+          isMobile ? () => dispatch(enableThreadsSidebar(false)) : null))))
     }
   }
 

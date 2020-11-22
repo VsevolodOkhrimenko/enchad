@@ -8,7 +8,8 @@ import {
 import { Visibility, VisibilityOff } from '@material-ui/icons'
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { enableKeysModal } from 'utils/common/actions'
+import { checkMobile } from 'helpers/common'
+import { enableKeysModal, enableThreadsSidebar } from 'utils/common/actions'
 import { setDecryptedKeyPair, setEncryptionError } from 'utils/encryption/actions'
 import { getMessages } from 'utils/messaging/actions'
 import Config from 'config'
@@ -21,10 +22,11 @@ const OpenKeyForm = (props) => {
     threadId
   } = props
 
+  const dispatch = useDispatch()
   const [passwordError, setPasswordError] = useState(null)
   const [showPassword, setShowPassword] = useState(false)
   const encryptionError = useSelector(state => state.encryption.encryptionError)
-  const dispatch = useDispatch()
+  const isMobile = checkMobile()
 
   useEffect(() => {
     return () => { dispatch(setEncryptionError(null)) }
@@ -52,6 +54,9 @@ const OpenKeyForm = (props) => {
           )
         )
       )
+      if (isMobile) {
+        dispatch(enableThreadsSidebar(false))
+      }
     }
   }
 

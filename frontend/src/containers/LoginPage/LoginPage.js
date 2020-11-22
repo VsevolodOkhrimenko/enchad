@@ -17,6 +17,7 @@ import {
   Brightness4
 } from '@material-ui/icons'
 import { useDispatch, useSelector } from 'react-redux'
+import DocumentTitle from 'react-document-title'
 import { enableDarkTheme } from 'utils/common/actions'
 import Loader from 'components/Loader'
 import history from 'browserHistory'
@@ -71,6 +72,7 @@ const LoginPage = (props) => {
 
   return (
     <>
+      <DocumentTitle title='Login | EnChad' />
       <AppBar position="static" className="navbar">
         <Toolbar>
           <div style={{ flexGrow: 1 }}></div>

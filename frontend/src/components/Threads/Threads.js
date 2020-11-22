@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { resetThreads } from 'utils/messaging/actions'
 import { enableThreadsSidebar, checkErrorStatus } from 'utils/common/actions'
+import { checkMobile } from 'helpers/common'
 import Thread from 'components/Thread'
 import Loader from 'components/Loader'
 import CreateThread from 'components/CreateThread'
@@ -23,6 +24,7 @@ const Threads = () => {
   const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent)
   const dispatch = useDispatch()
   const { thread_id } = useParams()
+  const isMobile = checkMobile()
   const threads = useSelector(state => state.messaging.threads)
   const unreadsByThread = useSelector(state => state.messaging.unreadsByThread)
   const userId = useSelector(state => state.auth.userId)
@@ -86,7 +88,7 @@ const Threads = () => {
     <SwipeableDrawer
       anchor="left"
       open={showThreadsSidebar}
-      variant="persistent"
+      variant={isMobile ? 'temporary' : 'persistent'}
       onClose={() => dispatch(enableThreadsSidebar(false))}
       onOpen={() => dispatch(enableThreadsSidebar(true))}
       disableBackdropTransition={!iOS}
@@ -95,7 +97,7 @@ const Threads = () => {
         paper: 'threads-sidebar'
       }}
     >
-      <List disablePadding>
+      <List disablePadding onClick={isMobile ? () => dispatch(enableThreadsSidebar(false)) : null}>
         <ListItem>
           <CreateThread />
         </ListItem>
