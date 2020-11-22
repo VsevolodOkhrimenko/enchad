@@ -1,3 +1,7 @@
+www.{$DOMAIN_NAME} {
+    redir https://{$DOMAIN_NAME}
+}
+
 {$DOMAIN_NAME} {
     reverse_proxy django:5000
     log {
