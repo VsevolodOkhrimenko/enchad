@@ -1,0 +1,21 @@
+# General
+# ------------------------------------------------------------------------------
+USE_DOCKER=yes
+IPYTHONDIR=/app/.ipython
+
+
+# React
+# ------------------------------------------------------------------------------
+HAS_EMBDED_FRONTEND=True
+
+
+# Google reCAPTHCHA
+# ------------------------------------------------------------------------------
+RECAPTCHA_PUBLIC_KEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+RECAPTCHA_PRIVATE_KEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+
+
+IV_SIZE=16
+KEY_SIZE=32
+SALT_SIZE=16
+SYMMETRIC_PASS=0d6f4b734dE9d81A92CcB291D96F1ddC7DF83D0cDaB59C8705756C05

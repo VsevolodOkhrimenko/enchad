@@ -1,0 +1,5 @@
+export const SET_TOKEN = 'SET_TOKEN'
+export const RESET_TOKEN = 'RESET_TOKEN'
+export const SET_USER_INFO = 'SET_USER_INFO'
+export const GET_USER_INFO = 'GET_USER_INFO'
+export const GET_USER_INFO_ERROR = 'GET_USER_INFO_ERROR'

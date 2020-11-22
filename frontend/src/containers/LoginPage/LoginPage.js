@@ -1,0 +1,138 @@
+import './LoginPage.scss'
+import axios from 'axios'
+import React, { useState, useEffect } from 'react'
+import {
+  TextField,
+  Button,
+  InputAdornment,
+  IconButton,
+  Container,
+  AppBar,
+  Toolbar
+} from '@material-ui/core'
+import {
+  Visibility,
+  VisibilityOff,
+  Brightness7,
+  Brightness4
+} from '@material-ui/icons'
+import { useDispatch, useSelector } from 'react-redux'
+import { enableDarkTheme } from 'utils/common/actions'
+import Loader from 'components/Loader'
+import history from 'browserHistory'
+import { storeAuthToken, resetAuthToken } from 'utils/auth/actions'
+import Config from 'config'
+
+const { backendUrl } = Config.network
+
+const LoginPage = (props) => {
+  const dispatch = useDispatch()
+  const useDarkTheme = useSelector(state => state.common.useDarkTheme)
+  const [loginError, setLoginError] = useState(null)
+  const [error, setError] = useState(null)
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    dispatch(resetAuthToken())
+  }, [])
+
+  function loginSubmit(event) {
+    event.preventDefault()
+    const username = event.target.elements.username.value
+    const password = event.target.elements.password.value
+    const url = `${backendUrl}/auth-token/`
+    const authData = {
+      username,
+      password
+    }
+    delete axios.defaults.headers.common["Authorization"];
+    setError(null)
+    setLoginError(null)
+    setIsLoading(true)
+    axios.post(url, authData).then((body) => {
+      dispatch(storeAuthToken(body['data']['token']))
+      setIsLoading(false)
+      history.push('threads')
+
+    }).catch(error => {
+      setIsLoading(false)
+      if (error.response) {
+        setLoginError('Invalid credentials')
+      } else {
+        setError('Connection error')
+      }
+    })
+  }
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword)
+  }
+
+  return (
+    <>
+      <AppBar position="static" className="navbar">
+        <Toolbar>
+          <div style={{ flexGrow: 1 }}></div>
+            <IconButton
+              color="inherit"
+              aria-label="theme"
+              onClick={() => dispatch(enableDarkTheme(!useDarkTheme))}
+            >
+              { useDarkTheme ?  <Brightness4 /> : <Brightness7 />  }
+            </IconButton>
+        </Toolbar>
+      </AppBar>
+      <div className="login-container">
+        <Container maxWidth="sm" className="login-inner-container">
+          { isLoading ? <Loader /> : null }
+          <form onSubmit={loginSubmit}>
+            { error ? <p className="error-message">{error}</p> : null }
+            <div>
+              <TextField
+                label="Username"
+                type="text"
+                name="username"
+                autoFocus={true}
+                fullWidth
+              />
+            </div>
+            <div>
+              <TextField
+                error={!!loginError}
+                helperText={loginError}
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                fullWidth
+                InputProps={{
+                  endAdornment: 
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        tabIndex='-1'
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                }}
+              />
+            </div>
+            <div className="submit-form-btn">
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+              >
+                Login
+              </Button>
+            </div>
+          </form>
+        </Container>
+      </div>
+    </>
+  )
+}
+
+export default LoginPage

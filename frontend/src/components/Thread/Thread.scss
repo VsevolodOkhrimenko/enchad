@@ -1,0 +1,12 @@
+.thread-item {
+  height: 70px;
+  padding: 20px 40px;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  display: block;
+  .thread-item-inner {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+}

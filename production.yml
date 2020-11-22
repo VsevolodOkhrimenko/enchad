@@ -1,0 +1,57 @@
+version: '3'
+
+volumes:
+  production_postgres_data: {}
+  production_postgres_data_backups: {}
+  production_caddy: {}
+  production_caddy_data: {}
+
+services:
+  django:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: chat_production_django
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    command: /start
+
+  postgres:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: chat_production_postgres
+    volumes:
+      - production_postgres_data:/var/lib/postgresql/data
+      - production_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.production/.postgres
+
+  caddy:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./compose/production/caddy/Dockerfile
+    image: chat_production_caddy
+    depends_on:
+      - django
+    volumes:
+      - production_caddy:/root/.caddy
+      - production_caddy_data:/data
+    env_file:
+      - ./.envs/.production/.caddy
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+
+  redis:
+    restart: always
+    image: redis:5.0
+    sysctls:
+      - net.core.somaxconn=1024
