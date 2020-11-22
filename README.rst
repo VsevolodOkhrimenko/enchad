@@ -22,6 +22,8 @@ If you want to use my front-end implementation, you will have to install `NodeJS
 
 .. _NodeJS: https://nodejs.org/en/download/
 
+Also you will have to change ``forntend\config.dist.js`` to ``forntend\config.js``
+
 
 Settings
 --------
