@@ -44,7 +44,7 @@ const Messaging = () => {
     dispatch(resetKeys())
     dispatch(setEncryptedPrivateKey(thread_id))
     dispatch(enableKeysModal(true))
-  }, [thread_id]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [thread_id, userId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderMessages = () => {
     return messages.map((message, index) => (
