@@ -87,9 +87,10 @@ export function setOpponentKey(opponentPublicKey) {
 }
 
 export function setEncryptedPrivateKey(threadId, callback) {
+  const { userId } = store.getState().auth
 
   return function action(dispatch) {
-    const encryptedPrivateKey = localStorage.getItem(`private-${threadId}`)
+    const encryptedPrivateKey = localStorage.getItem(`private-${userId}-${threadId}`)
     dispatch({
       type: SET_ENCRYPTED_PRIVATE_KEY,
       payload: {
@@ -103,14 +104,14 @@ export function setEncryptedPrivateKey(threadId, callback) {
 }
 
 export function setDecryptedKeyPair(threadId, passphrase, callback) {
-  const { salt } = store.getState().auth
+  const { userSecret, userId } = store.getState().auth
 
   return function action(dispatch) {
       dispatch(setEncryptionError(null))
-      const encryptedKey = localStorage.getItem(`private-${threadId}`)
-      decryptPrivateKey(encryptedKey, passphrase, salt).then(decryptedPrivateKey => {
+      const encryptedKey = localStorage.getItem(`private-${userId}-${threadId}`)
+      decryptPrivateKey(encryptedKey, passphrase, userSecret).then(decryptedPrivateKey => {
         const privateKeyObj = importPrivateKey(decryptedPrivateKey)
-        const publicKey = localStorage.getItem(`public-${threadId}`)
+        const publicKey = localStorage.getItem(`public-${userId}-${threadId}`)
         const publicKeyObj = importPublicKey(publicKey)
         dispatch({
           type: SET_USER_KEYS,
@@ -129,18 +130,19 @@ export function setDecryptedKeyPair(threadId, passphrase, callback) {
         } else {
           message = 'Error while decrypting. Please, chech your password'
         }
+        console.log(e)
         dispatch(setEncryptionError(message))
       })
   }
 }
 
 export function setDecryptedPrivateKey(threadId, passphrase, callback) {
-  const { salt } = store.getState().auth
+  const { userSecret, userId } = store.getState().auth
 
   return function action(dispatch) {
     dispatch(setEncryptionError(null))
-    const encryptedKey = localStorage.getItem(`private-${threadId}`)
-    decryptPrivateKey(encryptedKey, passphrase, salt).then(decryptedPrivateKey => {
+    const encryptedKey = localStorage.getItem(`private-${userId}-${threadId}`)
+    decryptPrivateKey(encryptedKey, passphrase, userSecret).then(decryptedPrivateKey => {
       const privateKey = importPrivateKey(decryptedPrivateKey)
       dispatch({
         type: SET_DECRYPTED_PRIVATE_KEY,
@@ -151,21 +153,25 @@ export function setDecryptedPrivateKey(threadId, passphrase, callback) {
       if (callback) {
         callback()
       }
+    }).catch(e => {
+      console.log(e)
+      const message = 'Error while decrypting'
+      dispatch(setEncryptionError(message))
     })
   }
 }
 
 export function storeEncryptedPrivateKey(privateKeyObj, passphrase, threadId) {
-  const { salt } = store.getState().auth
+  const { userSecret, userId } = store.getState().auth
 
   return function action(dispatch) {
     dispatch(setEncryptionError(null))
     const publicKey = exportPublicKey(privateKeyObj)
     const publicKeyObj = importPublicKey(publicKey)
     const privateKey = exportPrivateKey(privateKeyObj)
-    encryptPrivateKey(privateKey, passphrase, salt).then(encryptedPrivateKey => {
-      localStorage.setItem(`public-${threadId}`, publicKey)
-      localStorage.setItem(`private-${threadId}`, encryptedPrivateKey)
+    encryptPrivateKey(privateKey, passphrase, userSecret).then(encryptedPrivateKey => {
+      localStorage.setItem(`public-${userId}-${threadId}`, publicKey)
+      localStorage.setItem(`private-${userId}-${threadId}`, encryptedPrivateKey)
       dispatch({
         type: SET_USER_KEYS,
         payload: {
@@ -179,19 +185,23 @@ export function storeEncryptedPrivateKey(privateKeyObj, passphrase, threadId) {
           encryptedPrivateKey: encryptedPrivateKey
         }
       })
+    }).catch(e => {
+      console.log(e)
+      const message = 'Error while encrypting'
+      dispatch(setEncryptionError(message))
     })
   }
 }
 
 export function storePrivatePublicPair(passphrase, threadId, keysDict, callback) {
-  const { salt } = store.getState().auth
+  const { userSecret, userId } = store.getState().auth
 
   return function action(dispatch) {
     dispatch(setEncryptionError(null))
     const { privateKey, publicKey, privateKeyObj, publicKeyObj } = keysDict
-    encryptPrivateKey(privateKey, passphrase, salt).then(encryptedPrivateKey => {
-      localStorage.setItem(`public-${threadId}`, publicKey)
-      localStorage.setItem(`private-${threadId}`, encryptedPrivateKey)
+    encryptPrivateKey(privateKey, passphrase, userSecret).then(encryptedPrivateKey => {
+      localStorage.setItem(`public-${userId}-${threadId}`, publicKey)
+      localStorage.setItem(`private-${userId}-${threadId}`, encryptedPrivateKey)
       dispatch({
         type: SET_USER_KEYS,
         payload: {
@@ -209,9 +219,10 @@ export function storePrivatePublicPair(passphrase, threadId, keysDict, callback)
         callback()
       }
     }).catch(e => {
-        const message = 'Error while encrypting'
-        dispatch(setEncryptionError(message))
-      })
+      console.log(e)
+      const message = 'Error while encrypting'
+      dispatch(setEncryptionError(message))
+    })
   }
 }
 

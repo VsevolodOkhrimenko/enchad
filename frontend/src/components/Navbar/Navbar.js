@@ -28,32 +28,38 @@ const Navbar = () => {
   const useDarkTheme = useSelector(state => state.common.useDarkTheme)
 
   return (
-    <AppBar position="static" className="navbar">
+    <AppBar position='static' className='navbar'>
       <Toolbar>
-        <IconButton onClick={() => dispatch(enableThreadsSidebar(!showThreadsSidebar))} edge="start" color="inherit" aria-label="back">
-          <Badge badgeContent={unreadCount} color="secondary">
+        <IconButton
+          onClick={() => dispatch(enableThreadsSidebar(!showThreadsSidebar))}
+          edge='start'
+          color='inherit'
+          aria-label='back'
+        >
+          <Badge badgeContent={unreadCount} color='secondary'>
             { showThreadsSidebar ?
               <MenuOpen /> : <Menu />
             }
           </Badge>
         </IconButton>
-        <div style={{ flexGrow: 1 }}></div>
+        <div style={{ flexGrow: 1 }} />
           <IconButton
-            color="inherit"
-            aria-label="theme"
+            color='inherit'
+            aria-label='theme'
             onClick={() => dispatch(enableDarkTheme(!useDarkTheme))}
           >
-            { useDarkTheme ?  <Brightness4 /> : <Brightness7 />  }
+            { useDarkTheme ? <Brightness4 /> : <Brightness7 /> }
           </IconButton>
           <IconButton
-            color="inherit"
-            aria-label="settings"
+            color='inherit'
+            aria-label='settings'
             onClick={() => dispatch(enableSettingsSidebar(!showSettingsSidebar))}
           >
             <Settings />
           </IconButton>
       </Toolbar>
     </AppBar>
-  )}
+  )
+}
 
 export default Navbar

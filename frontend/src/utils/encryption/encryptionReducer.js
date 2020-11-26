@@ -19,7 +19,7 @@ const initialState = {
 }
 
 const encryptionReducer = (state = initialState, action) => {
-  switch(action.type) {
+  switch (action.type) {
     case SET_KEYS:
       return {
         ...state,

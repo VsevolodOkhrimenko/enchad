@@ -38,7 +38,7 @@ const Settings = () => {
 
   return (
     <SwipeableDrawer
-      anchor="right"
+      anchor='right'
       open={showSettingsSidebar}
       variant={isMobile ? 'temporary' : 'persistent'}
       onClose={() => dispatch(enableSettingsSidebar(false))}
@@ -69,7 +69,7 @@ const Settings = () => {
               }
             >
               <ListItemIcon><MeetingRoom /></ListItemIcon>
-              <ListItemText primary="Exit this chat" />
+              <ListItemText primary='Exit this chat' />
             </ListItem>
             <ListItem
               button
@@ -82,7 +82,7 @@ const Settings = () => {
               }
             >
               <ListItemIcon><VpnKey /></ListItemIcon>
-              <ListItemText primary="Set new key pair" />
+              <ListItemText primary='Set new key pair' />
             </ListItem>
           </div>
         : null }
@@ -90,10 +90,11 @@ const Settings = () => {
         <ChangePassword />
         <ListItem button onClick={() => dispatch(resetAuthToken())}>
           <ListItemIcon><ExitToApp /></ListItemIcon>
-          <ListItemText primary="Logout" />
+          <ListItemText primary='Logout' />
         </ListItem>
       </List>
     </SwipeableDrawer>
-  )}
+  )
+}
 
 export default Settings

@@ -24,7 +24,7 @@ import OpenKeyForm from 'components/OpenKeyForm'
 import SendMessage from 'components/SendMessage'
 
 
-const Messaging = (props) => {
+const Messaging = () => {
   const dispatch = useDispatch()
   const { thread_id } = useParams()
   const messages = useSelector(state => state.messaging.messages)
@@ -38,30 +38,22 @@ const Messaging = (props) => {
   const keysModalIsVisible = useSelector(state => state.common.keysModalIsVisible)
   const userId = useSelector(state => state.auth.userId)
 
-  // useEffect(() => {
-  //   dispatch(setEncryptedPrivateKey(thread_id))
-  //   dispatch(enableKeysModal(true))
-  //   return () => {
-  //     dispatch(resetMessages())
-  //     dispatch(resetKeys())
-  //   }
-  // }, [])
 
   useEffect(() => {
     dispatch(resetMessages())
     dispatch(resetKeys())
     dispatch(setEncryptedPrivateKey(thread_id))
     dispatch(enableKeysModal(true))
-  }, [thread_id])
+  }, [thread_id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderMessages = () => {
     return messages.map((message, index) => (
       <Message
         key={index}
-        id={message["id"]}
-        text={message["text"]}
-        read={message["read"]}
-        senderClass={userId === message["sender"] ? 'owner' : 'opponent'}
+        id={message.id}
+        text={message.text}
+        read={message.read}
+        senderClass={userId === message.sender ? 'owner' : 'opponent'}
       />
     ))
   }
@@ -72,7 +64,8 @@ const Messaging = (props) => {
     if (shouldScroll && nextUrl && !isLoadingMessages) {
       dispatch(getMessages(thread_id, nextUrl))
     }
-    if (unreadsByThread[thread_id] && unreadsByThread[thread_id] > 0 && (scrollTop + event.currentTarget.offsetHeight === event.currentTarget.scrollHeight)) {
+    if (unreadsByThread[thread_id] && unreadsByThread[thread_id] > 0 &&
+        (scrollTop + event.currentTarget.offsetHeight === event.currentTarget.scrollHeight)) {
       dispatch(setAsReadCurrent(thread_id))
     }
   }
@@ -83,10 +76,9 @@ const Messaging = (props) => {
 
   const getOpponentUsername = () => {
     const activeThread = getItemById(threads, thread_id)
-    console.log(userId)
     if (activeThread) {
-      return activeThread['opponent']['id'] === userId ?
-        activeThread['owner']['username'] : activeThread['opponent']['username']
+      return activeThread.opponent.id === userId ?
+        activeThread.owner.username : activeThread.opponent.username
     }
     return ''
   }
@@ -95,28 +87,31 @@ const Messaging = (props) => {
 
 
   return (
-    <div className="full-height-component">
+    <div className='full-height-component'>
       <DocumentTitle title={`Chat with ${getOpponentUsername()} | EnChad`} />
       <div
-        id="threadContainer"
-        className={`${activeOpponentPublicKey && activePublicKey && encryptedPrivateKey ? 'ready' : ''}`}
+        id='threadContainer'
+        className={
+          `${activeOpponentPublicKey && activePublicKey && encryptedPrivateKey ? 'ready' : ''}`}
         onScroll={threadScroll}
       >
         { isLoadingMessages ? <Loader /> : null }
 
         { !isLoadingMessages && (!activeOpponentPublicKey || !activePublicKey) ?
-          <div className="chat-not-initiated">
-            { !activeOpponentPublicKey && activePublicKey ? <p>Target user has to share his public key</p> : null }
+          <div className='chat-not-initiated'>
+            { !activeOpponentPublicKey && activePublicKey ?
+              <p>Target user has to share his public key</p> : null }
             { !activePublicKey ?
               <div>
-                <p>You have to {encryptedPrivateKey ? 'open your private key' : 'create your key pair'}</p>
+                <p>You have to {encryptedPrivateKey ?
+                  'open your private key' : 'create your key pair'}</p>
                 <Button
                   onClick={onSharePublicKeyClick}
-                  variant="contained"
-                  color="primary"
+                  variant='contained'
+                  color='primary'
                 >
                   {encryptedPrivateKey ? 'Open key' : 'Create key pair'}
-                  
+
                 </Button>
               </div> : null
             }
@@ -135,17 +130,22 @@ const Messaging = (props) => {
             dispatch(setEncryptedPrivateKey(thread_id))
           }
         }
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-        maxWidth="sm"
+        aria-labelledby='simple-modal-title'
+        aria-describedby='simple-modal-description'
+        maxWidth='sm'
         fullWidth={true}
       >
-        <DialogTitle id="dialogTitle">{encryptedPrivateKey ? 'Open key' : 'Create key'}</DialogTitle>
+        <DialogTitle
+          id='dialogTitle'
+        >
+          {encryptedPrivateKey ? 'Open key' : 'Create key'}
+        </DialogTitle>
         <DialogContent>
-          {encryptedPrivateKey ? <OpenKeyForm threadId={thread_id} /> : <SotreKeyForm threadId={thread_id} />}
+          {encryptedPrivateKey ?
+            <OpenKeyForm threadId={thread_id} /> : <SotreKeyForm threadId={thread_id} />}
         </DialogContent>
       </Dialog>
-    </div> 
+    </div>
   )
 }
 

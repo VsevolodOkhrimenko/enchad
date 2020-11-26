@@ -33,12 +33,12 @@ const ShowUserInfo = () => {
     axios.post(url, {}).then((body) => {
       const { data } = body
       dispatch(getUserInfo())
-      dispatch(setSnackbar(data['message']))
+      dispatch(setSnackbar(data.message))
     }).catch(error => {
       dispatch(enableAuthLoader(false))
       if (error.response) {
         dispatch(checkErrorStatus(error.response.status))
-        dispatch(setSnackbar(error.response.data['detail'], 'error'))
+        dispatch(setSnackbar(error.response.data.detail, 'error'))
       } else {
         dispatch(setSnackbar('Connection error', 'error'))
       }
@@ -49,10 +49,10 @@ const ShowUserInfo = () => {
     <>
     <ListItem button onClick={() => setShowDialog(true)} >
       <ListItemIcon><PersonPin /></ListItemIcon>
-      <ListItemText primary="Show my user info" />
+      <ListItemText primary='Show my user info' />
     </ListItem>
     <Dialog
-      maxWidth="sm"
+      maxWidth='sm'
       fullWidth
       open={showDialog}
       onClose={() => setShowDialog(false)}
@@ -65,16 +65,23 @@ const ShowUserInfo = () => {
           Username: {username}
         </DialogContentText>
         <DialogContentText>
-          User Lookup Id: {userLookupId} <Button onClick={resetLookupId} color="primary">Reset</Button>
+          User Lookup Id: {userLookupId}
+          <Button
+            onClick={resetLookupId}
+            color='primary'
+          >
+            Reset
+          </Button>
         </DialogContentText>
         <DialogActions>
-          <Button variant="contained" onClick={() => setShowDialog(false)} color="primary">
+          <Button variant='contained' onClick={() => setShowDialog(false)} color='primary'>
             Close
           </Button>
         </DialogActions>
       </DialogContent>
     </Dialog>
     </>
-  )}
+  )
+}
 
 export default ShowUserInfo

@@ -12,10 +12,11 @@ const Message = (props) => {
 
   return (
     <div id={id} className={`message-wrapper ${senderClass} ${read ? 'read' : ''}`}>
-      <div className={`message ${text['type']}`}>
-        {text['content']}
+      <div className={`message ${text.type}`}>
+        {text.content}
       </div>
     </div>
-  )}
+  )
+}
 
 export default Message

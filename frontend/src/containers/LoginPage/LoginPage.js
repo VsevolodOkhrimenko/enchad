@@ -6,6 +6,8 @@ import {
   Button,
   InputAdornment,
   IconButton,
+  Checkbox,
+  FormControlLabel,
   Container,
   AppBar,
   Toolbar
@@ -26,7 +28,7 @@ import Config from 'config'
 
 const { backendUrl } = Config.network
 
-const LoginPage = (props) => {
+const LoginPage = () => {
   const dispatch = useDispatch()
   const useDarkTheme = useSelector(state => state.common.useDarkTheme)
   const [loginError, setLoginError] = useState(null)
@@ -36,29 +38,29 @@ const LoginPage = (props) => {
 
   useEffect(() => {
     dispatch(resetAuthToken())
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   function loginSubmit(event) {
     event.preventDefault()
     const username = event.target.elements.username.value
     const password = event.target.elements.password.value
+    const stayLoggedIn = event.target.elements.stayLoggedIn.checked
     const url = `${backendUrl}/auth-token/`
     const authData = {
       username,
       password
     }
-    delete axios.defaults.headers.common["Authorization"];
+    delete axios.defaults.headers.common.Authorization
     setError(null)
     setLoginError(null)
     setIsLoading(true)
     axios.post(url, authData).then((body) => {
-      dispatch(storeAuthToken(body['data']['token']))
+      dispatch(storeAuthToken(body.data.token, stayLoggedIn))
       setIsLoading(false)
-      history.push('threads')
-
-    }).catch(error => {
+      history.push('')
+    }).catch(err => {
       setIsLoading(false)
-      if (error.response) {
+      if (err.response) {
         setLoginError('Invalid credentials')
       } else {
         setError('Connection error')
@@ -73,28 +75,28 @@ const LoginPage = (props) => {
   return (
     <>
       <DocumentTitle title='Login | EnChad' />
-      <AppBar position="static" className="navbar">
+      <AppBar position='static' className='navbar'>
         <Toolbar>
-          <div style={{ flexGrow: 1 }}></div>
+          <div style={{ flexGrow: 1 }} />
             <IconButton
-              color="inherit"
-              aria-label="theme"
+              color='inherit'
+              aria-label='theme'
               onClick={() => dispatch(enableDarkTheme(!useDarkTheme))}
             >
-              { useDarkTheme ?  <Brightness4 /> : <Brightness7 />  }
+              { useDarkTheme ? <Brightness4 /> : <Brightness7 /> }
             </IconButton>
         </Toolbar>
       </AppBar>
-      <div className="login-container">
-        <Container maxWidth="sm" className="login-inner-container">
+      <div className='login-container'>
+        <Container maxWidth='sm' className='login-inner-container'>
           { isLoading ? <Loader /> : null }
           <form onSubmit={loginSubmit}>
-            { error ? <p className="error-message">{error}</p> : null }
+            { error ? <p className='error-message'>{error}</p> : null }
             <div>
               <TextField
-                label="Username"
-                type="text"
-                name="username"
+                label='Username'
+                type='text'
+                name='username'
                 autoFocus={true}
                 fullWidth
               />
@@ -103,15 +105,15 @@ const LoginPage = (props) => {
               <TextField
                 error={!!loginError}
                 helperText={loginError}
-                label="Password"
+                label='Password'
                 type={showPassword ? 'text' : 'password'}
-                name="password"
+                name='password'
                 fullWidth
                 InputProps={{
-                  endAdornment: 
-                    <InputAdornment position="end">
+                  endAdornment:
+                    <InputAdornment position='end'>
                       <IconButton
-                        aria-label="toggle password visibility"
+                        aria-label='toggle password visibility'
                         onClick={handleClickShowPassword}
                         tabIndex='-1'
                       >
@@ -121,11 +123,20 @@ const LoginPage = (props) => {
                 }}
               />
             </div>
-            <div className="submit-form-btn">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name='stayLoggedIn'
+                  color='primary'
+                />
+              }
+              label='Remember me'
+            />
+            <div className='submit-form-btn'>
               <Button
-                type="submit"
-                variant="contained"
-                color="primary"
+                type='submit'
+                variant='contained'
+                color='primary'
               >
                 Login
               </Button>

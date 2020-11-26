@@ -35,7 +35,20 @@ import Config from 'config'
 const { backendUrl } = Config.network
 
 
-export function getMessages(thread, nextUrl=null) {
+export function updateUnreadCount(count, unreadsByThread) {
+  return function action(dispatch) {
+    dispatch({
+      type: UPDATE_UNREAD_COUNT,
+      payload: {
+        unreadCount: count,
+        unreadsByThread: unreadsByThread
+      }
+    })
+  }
+}
+
+
+export function getMessages(thread, nextUrl = null) {
   const { messages, threads } = store.getState().messaging
   const { activePrivateKey } = store.getState().encryption
 
@@ -43,7 +56,7 @@ export function getMessages(thread, nextUrl=null) {
     let url = `${backendUrl}/api/messages/`
     if (!nextUrl) {
       dispatch({
-        type: RESET_MESSAGES,
+        type: RESET_MESSAGES
       })
     } else {
       url = nextUrl
@@ -54,21 +67,21 @@ export function getMessages(thread, nextUrl=null) {
     axios.get(url, {
       params: {
         thread_id: thread
-      },
+      }
     }).then((body) => {
       const { data } = body
       const objDiv = document.getElementById('threadContainer')
       const prevScrollHeight = objDiv.scrollHeight
       const currentThread = getItemById(threads, thread)
-      if (!nextUrl && currentThread && currentThread["public_key"]) {
-        dispatch(setOpponentKey(currentThread["public_key"]))
+      if (!nextUrl && currentThread && currentThread.public_key) {
+        dispatch(setOpponentKey(currentThread.public_key))
       }
-      decryptMessageArr(data['results'], activePrivateKey).then(result => {
+      decryptMessageArr(data.results, activePrivateKey).then(result => {
         dispatch({
           type: SET_MESSAGES,
           payload: {
             messages: [...result, ...messages],
-            nextUrl: data['next']
+            nextUrl: data.next
           }
         })
         if (!nextUrl) {
@@ -78,10 +91,10 @@ export function getMessages(thread, nextUrl=null) {
         }
 
         const { unreadsByThread, unreadCount } = store.getState().messaging
-        const unreadsByThreadCopy = {...unreadsByThread}
+        const unreadsByThreadCopy = { ...unreadsByThread }
         let unreadCountCurrent = unreadCount
         if (unreadsByThreadCopy[thread]) {
-          unreadCountCurrent -= unreadsByThreadCopy[thread]
+          unreadCountCurrent = unreadCountCurrent - unreadsByThreadCopy[thread]
         }
         unreadsByThreadCopy[thread] = 0
         dispatch(updateUnreadCount(unreadCountCurrent, unreadsByThreadCopy))
@@ -89,9 +102,29 @@ export function getMessages(thread, nextUrl=null) {
     }).catch(error => {
       if (error.response) {
         dispatch(checkErrorStatus(error.response.status))
-        dispatch(setSnackbar(error.response.data['detail'], 'error'))
+        dispatch(setSnackbar(error.response.data.detail, 'error'))
       } else {
         dispatch(setSnackbar('Connection error', 'error'))
+      }
+    })
+  }
+}
+
+export function incrementUnreadCountByThread(threadId) {
+  const { unreadsByThread, unreadCount } = store.getState().messaging
+
+  return function action(dispatch) {
+    const unreadsByThreadCopy = { ...unreadsByThread }
+    if (unreadsByThreadCopy[threadId]) {
+      unreadsByThreadCopy[threadId] = unreadsByThreadCopy[threadId] + 1
+    } else {
+      unreadsByThreadCopy[threadId] = 1
+    }
+    dispatch({
+      type: UPDATE_UNREAD_COUNT,
+      payload: {
+        unreadCount: unreadCount + 1,
+        unreadsByThread: unreadsByThreadCopy
       }
     })
   }
@@ -102,9 +135,9 @@ export function wsAppendMessage(messageData) {
   const { nextUrl, messages, threads, nextThreadUrl } = store.getState().messaging
 
   return function action(dispatch) {
-    const index = findIndexById(threads, messageData["thread"])
+    const index = findIndexById(threads, messageData.thread)
     if (index === -1) {
-      const url = `${backendUrl}/api/threads/${messageData["thread"]}/`
+      const url = `${backendUrl}/api/threads/${messageData.thread}/`
       axios.get(url).then((body) => {
         const { data } = body
         dispatch({
@@ -117,13 +150,13 @@ export function wsAppendMessage(messageData) {
       }).catch(error => {
         if (error.response) {
           dispatch(checkErrorStatus(error.response.status))
-          dispatch(setSnackbar(error.response.data['detail'], 'error'))
+          dispatch(setSnackbar(error.response.data.detail, 'error'))
         } else {
           dispatch(setSnackbar('Connection error', 'error'))
         }
       })
     } else if (index !== 0) {
-      const reordered = moveToFirstById(threads, messageData["thread"])
+      const reordered = moveToFirstById(threads, messageData.thread)
       dispatch({
         type: SET_THREADS,
         payload: {
@@ -132,7 +165,7 @@ export function wsAppendMessage(messageData) {
         }
       })
     }
-    if (history.location.pathname === `/${messageData["thread"]}`) {
+    if (history.location.pathname === `/${messageData.thread}`) {
       const { activePrivateKey } = store.getState().encryption
       const objDiv = document.getElementById('threadContainer')
       const shouldScroll = objDiv.scrollTop + objDiv.offsetHeight === objDiv.scrollHeight
@@ -146,22 +179,22 @@ export function wsAppendMessage(messageData) {
         })
         if (shouldScroll) {
           objDiv.scrollTop = objDiv.scrollHeight
-          const urlRead = `${backendUrl}/api/messages/${messageData["id"]}/mark_as_read_by_id/`
+          const urlRead = `${backendUrl}/api/messages/${messageData.id}/mark_as_read_by_id/`
           axios.post(urlRead, {}).then(() => {
           }).catch(error => {
             if (error.response) {
               dispatch(checkErrorStatus(error.response.status))
-              dispatch(setSnackbar(error.response.data['detail'], 'error'))
+              dispatch(setSnackbar(error.response.data.detail, 'error'))
             } else {
               dispatch(setSnackbar('Connection error', 'error'))
             }
           })
         } else {
-          dispatch(incrementUnreadCountByThread(messageData["thread"]))
+          dispatch(incrementUnreadCountByThread(messageData.thread))
         }
       })
     } else {
-      dispatch(incrementUnreadCountByThread(messageData["thread"]))
+      dispatch(incrementUnreadCountByThread(messageData.thread))
     }
   }
 }
@@ -171,16 +204,16 @@ export function wsReadMessages(data) {
   const { messages, nextUrl } = store.getState().messaging
 
   return function action(dispatch) {
-    if (history.location.pathname === `/${data["thread"]}`) {
-      const ids = data['messages']
-      for (let i = 0, length = ids.length; i < length; i += 1) {
+    if (history.location.pathname === `/${data.thread}`) {
+      const ids = data.messages
+      for (let i = 0, length = ids.length; i < length; i = i + 1) {
         const message = document.getElementById(ids[i])
         if (message) {
-          message.classList.add("read")
+          message.classList.add('read')
         }
         let index = findIndexById(messages, ids[i])
         if (index !== -1) {
-          messages[index]['read'] = true
+          messages[index].read = true
         }
       }
       dispatch({
@@ -198,7 +231,7 @@ export function wsReadMessages(data) {
 export function resetMessages() {
   return function action(dispatch) {
     dispatch({
-      type: RESET_MESSAGES,
+      type: RESET_MESSAGES
     })
   }
 }
@@ -211,7 +244,7 @@ export function updateKeyPair(threadId, passphrase, privateKeyStr, callback) {
     if (privateKeyStr) {
       try {
         privateKeyObj = importPrivateKey(privateKeyStr)
-      } catch(e) {
+      } catch (e) {
          dispatch(setEncryptionError('Error while importing Private Key'))
         return null
       }
@@ -229,9 +262,9 @@ export function updateKeyPair(threadId, passphrase, privateKeyStr, callback) {
       publicKeyObj
     }
     const threadData = {
-      public_key: publicKey,
+      public_key: publicKey
     }
-    axios.patch(url, threadData).then((body) => {
+    axios.patch(url, threadData).then(() => {
       dispatch(storePrivatePublicPair(
         passphrase,
         threadId,
@@ -245,7 +278,7 @@ export function updateKeyPair(threadId, passphrase, privateKeyStr, callback) {
     }).catch(error => {
       if (error.response) {
         dispatch(checkErrorStatus(error.response.status))
-        dispatch(setSnackbar(error.response.data['detail'], 'error'))
+        dispatch(setSnackbar(error.response.data.detail, 'error'))
       } else {
         dispatch(setSnackbar('Connection error', 'error'))
       }
@@ -257,7 +290,7 @@ export function updateKeyPair(threadId, passphrase, privateKeyStr, callback) {
 export function resetThreads() {
   return function action(dispatch) {
     dispatch({
-      type: RESET_THREADS,
+      type: RESET_THREADS
     })
   }
 }
@@ -274,8 +307,8 @@ export function wsAppendThread(threadData) {
         nextThreadUrl: nextThreadUrl
       }
     })
-    const unreadsByThreadCopy = {...unreadsByThread}
-    unreadsByThreadCopy[threadData["id"]] = 1
+    const unreadsByThreadCopy = { ...unreadsByThread }
+    unreadsByThreadCopy[threadData.id] = 1
     dispatch(updateUnreadCount(unreadCount + 1, unreadsByThreadCopy))
   }
 }
@@ -284,12 +317,12 @@ export function wsAppendThread(threadData) {
 export function wsUpdateCurrentThread(threadData) {
   const { threads, nextThreadUrl } = store.getState().messaging
   return function action(dispatch) {
-    if (history.location.pathname === `/${threadData["id"]}`) {
-      dispatch(setOpponentKey(threadData["public_key"]))
+    if (history.location.pathname === `/${threadData.id}`) {
+      dispatch(setOpponentKey(threadData.public_key))
     }
-    for (let i = 0, length = threads.length; i < length; i += 1) {
-      if (threads[i]['id'] === threadData['id']) {
-        threads[i]['public_key'] = threadData['public_key']
+    for (let i = 0, length = threads.length; i < length; i = i + 1) {
+      if (threads[i].id === threadData.id) {
+        threads[i].public_key = threadData.public_key
       }
       dispatch({
         type: SET_THREADS,
@@ -302,52 +335,20 @@ export function wsUpdateCurrentThread(threadData) {
   }
 }
 
-export function updateUnreadCount(count, unreadsByThread) {
-  return function action(dispatch) {
-    dispatch({
-      type: UPDATE_UNREAD_COUNT,
-      payload: {
-        unreadCount: count,
-        unreadsByThread: unreadsByThread
-      }
-    })
-  }
-}
-
 export function resetUnreadCountByThread(threadId) {
   const { unreadsByThread, unreadCount } = store.getState().messaging
 
   return function action(dispatch) {
-    const unreadsByThreadCopy = {...unreadsByThread}
+    const unreadsByThreadCopy = { ...unreadsByThread }
     let unreadCountCurrent = unreadCount
     if (unreadsByThreadCopy[threadId]) {
-      unreadCountCurrent -= unreadsByThreadCopy[threadId]
+      unreadCountCurrent = unreadCountCurrent - unreadsByThreadCopy[threadId]
     }
     unreadsByThreadCopy[threadId] = 0
     dispatch({
       type: UPDATE_UNREAD_COUNT,
       payload: {
         unreadCount: unreadCountCurrent,
-        unreadsByThread: unreadsByThreadCopy
-      }
-    })
-  }
-}
-
-export function incrementUnreadCountByThread(threadId) {
-  const { unreadsByThread, unreadCount } = store.getState().messaging
-
-  return function action(dispatch) {
-    const unreadsByThreadCopy = {...unreadsByThread}
-    if (unreadsByThreadCopy[threadId]) {
-      unreadsByThreadCopy[threadId] += 1
-    } else {
-      unreadsByThreadCopy[threadId] = 1
-    }
-    dispatch({
-      type: UPDATE_UNREAD_COUNT,
-      payload: {
-        unreadCount: unreadCount + 1,
         unreadsByThread: unreadsByThreadCopy
       }
     })
@@ -362,13 +363,13 @@ export function setAsReadCurrent(threadId) {
     const url = `${backendUrl}/api/threads/${threadId}/mark_as_read_array/`
     const messagesCopy = [...messages]
     const idsToRead = []
-    for (let i = 0, length = messagesCopy.length; i < length; i += 1) {
-      if (!messagesCopy[i]['read'] && messagesCopy[i]['sender'] !== userId) {
-        idsToRead.push(messagesCopy[i]['id'])
-        messagesCopy[i]['read'] = true
+    for (let i = 0, length = messagesCopy.length; i < length; i = i + 1) {
+      if (!messagesCopy[i].read && messagesCopy[i].sender !== userId) {
+        idsToRead.push(messagesCopy[i].id)
+        messagesCopy[i].read = true
       }
     }
-    axios.post(url, { messages: idsToRead }).then((body) => {
+    axios.post(url, { messages: idsToRead }).then(() => {
       dispatch({
         type: SET_MESSAGES,
         payload: {
@@ -377,11 +378,10 @@ export function setAsReadCurrent(threadId) {
         }
       })
       dispatch(resetUnreadCountByThread(threadId))
-      
     }).catch(error => {
       if (error.response) {
         dispatch(checkErrorStatus(error.response.status))
-        dispatch(setSnackbar(error.response.data['detail'], 'error'))
+        dispatch(setSnackbar(error.response.data.detail, 'error'))
       } else {
         dispatch(setSnackbar('Connection error', 'error'))
       }

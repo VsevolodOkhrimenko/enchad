@@ -33,13 +33,6 @@ const Threads = () => {
   const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    if (userId) {
-      getThreads()
-    }
-    return () => { dispatch(resetThreads()) }
-  }, [userId])
-
   const getThreads = (nextUrl) => {
     let url = `${backendUrl}/api/threads/`
     setError(null)
@@ -53,16 +46,26 @@ const Threads = () => {
       const { data } = body
       dispatch(setThreads(data))
       setIsLoading(false)
-    }).catch(error => {
+    }).catch(err => {
       setIsLoading(false)
-      if (error.response) {
-        dispatch(checkErrorStatus(error.response.status))
-        setError(error.response.data['detail'])
+      if (err.response) {
+        dispatch(checkErrorStatus(err.response.status))
+        setError(err.response.data.detail)
       } else {
         setError('Connection error', null)
       }
     })
   }
+
+  useEffect(() => {
+    if (userId) {
+      getThreads()
+    }
+    return () => {
+     dispatch(resetThreads())
+    }
+  }, [userId]) // eslint-disable-line react-hooks/exhaustive-deps
+
 
   const threadsListScroll = (event) => {
     const { scrollTop, scrollHeight, offsetHeight } = event.currentTarget
@@ -76,17 +79,17 @@ const Threads = () => {
     return threads.map((thread, index) => (
       <Thread
         key={index}
-        id={thread["id"]}
-        opponent={thread["owner"]["id"] === userId ? thread["opponent"] : thread["owner"]}
-        unreadCount={unreadsByThread[thread["id"]]}
-        selected={thread_id === thread["id"]}
+        id={thread.id}
+        opponent={thread.owner.id === userId ? thread.opponent : thread.owner}
+        unreadCount={unreadsByThread[thread.id]}
+        selected={thread_id === thread.id}
       />
     ))
   }
 
   return (
     <SwipeableDrawer
-      anchor="left"
+      anchor='left'
       open={showThreadsSidebar}
       variant={isMobile ? 'temporary' : 'persistent'}
       onClose={() => dispatch(enableThreadsSidebar(false))}
@@ -102,9 +105,9 @@ const Threads = () => {
           <CreateThread />
         </ListItem>
         <Divider />
-        <div id="threadsList" onScroll={ threadsListScroll }>
+        <div id='threadsList' onScroll={ threadsListScroll }>
           { isLoading ? <Loader /> : null }
-          { error ? <p className="error-message">{error}</p> : null }
+          { error ? <p className='error-message'>{error}</p> : null }
           {renderThreads()}
         </div>
       </List>

@@ -18,7 +18,7 @@ const initialState = {
 }
 
 const commonReducer = (state = initialState, action) => {
-  switch(action.type) {
+  switch (action.type) {
     case SET_SNACKBAR:
       return {
         ...state,

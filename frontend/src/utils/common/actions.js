@@ -9,16 +9,7 @@ import {
 import { resetAuthToken } from 'utils/auth/actions'
 
 
-export function checkErrorStatus(code) {
-  return function action(dispatch) {
-    if (code === 401) {
-      dispatch(setSnackbar('Auth token is expired', 'error'))
-      dispatch(resetAuthToken())
-    }
-  }
-}
-
-export function setSnackbar(message, type='success') {
+export function setSnackbar(message, type = 'success') {
   return function action(dispatch) {
     dispatch({
       type: SET_SNACKBAR,
@@ -27,6 +18,16 @@ export function setSnackbar(message, type='success') {
         type: type
       }
     })
+  }
+}
+
+
+export function checkErrorStatus(code) {
+  return function action(dispatch) {
+    if (code === 401) {
+      dispatch(setSnackbar('Auth token is expired', 'error'))
+      dispatch(resetAuthToken())
+    }
   }
 }
 

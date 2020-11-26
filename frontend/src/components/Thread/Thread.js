@@ -20,13 +20,14 @@ const Thread = (props) => {
     <ListItem
       onClick={() => history.push(`/${id}`)}
       button
-      className="thread-item"
+      className='thread-item'
       selected={selected}
     >
-      <Badge badgeContent={unreadCount} color="secondary">
-        <ListItemText primary={`Chat with ${opponent["username"]}`} />
+      <Badge badgeContent={unreadCount} color='secondary'>
+        <ListItemText primary={`Chat with ${opponent.username}`} />
       </Badge>
     </ListItem>
-  )}
+  )
+}
 
 export default Thread

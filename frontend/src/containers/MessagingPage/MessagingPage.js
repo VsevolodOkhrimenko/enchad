@@ -9,7 +9,6 @@ import EmptyThread from 'components/EmptyThread'
 import Threads from 'components/Threads'
 import Navbar from 'components/Navbar'
 import Settings from 'components/Settings'
-import { checkIfIdExists } from 'helpers/common'
 import messagingConnection, { closeWebsocketConnection } from 'utils/messaging/messagingConnection'
 import { getUserInfo } from 'utils/auth/actions'
 
@@ -21,7 +20,6 @@ const MessagingPage = () => {
   const authToken = useSelector(state => state.auth.authToken)
   const showThreadsSidebar = useSelector(state => state.common.showThreadsSidebar)
   const showSettingsSidebar = useSelector(state => state.common.showSettingsSidebar)
-  const threads = useSelector(state => state.messaging.threads)
 
   useEffect(() => {
       dispatch(messagingConnection(authToken))
@@ -29,16 +27,21 @@ const MessagingPage = () => {
       return () => {
         closeWebsocketConnection()
       }
-    }, [authToken])
+    }, [authToken]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
       <DocumentTitle title='No chat is opened | EnChad' />
       <Threads />
-      <div className={`content ${showThreadsSidebar && !isMobile ? 'threads-open' : ''} ${showSettingsSidebar && !isMobile ? 'settings-open' : ''}`}>
+      <div
+        className={
+          `content ${showThreadsSidebar && !isMobile ? 'threads-open' : ''}
+          ${showSettingsSidebar && !isMobile ? 'settings-open' : ''}`
+        }
+      >
         <Navbar />
         {
-          checkIfIdExists(threads, thread_id) ?
+          thread_id ?
             <Messaging /> : <EmptyThread />
         }
       </div>

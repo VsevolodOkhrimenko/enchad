@@ -24,51 +24,52 @@ const ExportPrivateKey = () => {
   const privateKey = exportPrivateKey(activePrivateKey)
 
   const copyKey = () => {
-    navigator.clipboard.writeText(privateKey).then(function() {
+    navigator.clipboard.writeText(privateKey).then(function () {
       dispatch(setSnackbar('Copied to Clickboard'))
-    }, function(err) {
+    }, function (err) {
       setError(`Could not copy key: ${err}`)
       dispatch(setSnackbar(`Could not copy key: ${err}`, 'error'))
-    });
+    })
   }
 
   return (
     <>
     <ListItem button onClick={() => setShowDialog(true)} >
       <ListItemIcon><OpenInBrowser /></ListItemIcon>
-      <ListItemText primary="Export my private key" />
+      <ListItemText primary='Export my private key' />
     </ListItem>
     <Dialog
-      maxWidth="md"
+      maxWidth='md'
       fullWidth
       open={showDialog}
       onClose={() => setShowDialog(false)}
     >
       <DialogTitle>Raw Private Key</DialogTitle>
       <DialogContent>
-        { error ? <p className="user-info-error">{error}</p> : null }
+        { error ? <p className='user-info-error'>{error}</p> : null }
         <TextField
           multiline
-          name="privateKey"
-          label="Private key"
+          name='privateKey'
+          label='Private key'
           rows={28}
           fullWidth
           value={ privateKey }
           InputProps={{
-            readOnly: true,
+            readOnly: true
           }}
         />
         <DialogActions>
-          <Button variant="contained" onClick={copyKey} color="primary">
+          <Button variant='contained' onClick={copyKey} color='primary'>
             Copy
           </Button>
-          <Button variant="contained" onClick={() => setShowDialog(false)} color="primary">
+          <Button variant='contained' onClick={() => setShowDialog(false)} color='primary'>
             Close
           </Button>
         </DialogActions>
       </DialogContent>
     </Dialog>
     </>
-  )}
+  )
+}
 
 export default ExportPrivateKey

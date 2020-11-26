@@ -282,6 +282,5 @@ chat/media/
 
 ### Front-end ignores
 
-config.js
 package-lock.json
 packages.microsoft.gpg

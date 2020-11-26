@@ -65,11 +65,11 @@ const SotreKeyForm = (props) => {
   }
 
   return (
-    <div className="form key-form">
+    <div className='form key-form'>
       { encryptionLoading ? <Loader /> : null }
-      { encryptionError ? <p className="error-message">{encryptionError}</p> : null}
+      { encryptionError ? <p className='error-message'>{encryptionError}</p> : null}
       <form onSubmit={storeKeySubmit}>
-        <div className="private-key-accordion">
+        <div className='private-key-accordion'>
           <Accordion>
             <AccordionSummary
               expandIcon={<ExpandMore />}
@@ -80,10 +80,10 @@ const SotreKeyForm = (props) => {
               <TextField
                 fullWidth
                 multiline
-                name="privateKey"
-                label="Raw RSA PKCS8 Private Key"
+                name='privateKey'
+                label='Raw RSA PKCS8 Private Key'
                 rows={28}
-                helperText="Leave empty to generate new key"
+                helperText='Leave empty to generate new key'
               />
             </AccordionDetails>
           </Accordion>
@@ -92,14 +92,14 @@ const SotreKeyForm = (props) => {
           <TextField
             fullWidth
             autoFocus={true}
-            label="Create password"
-            type="password"
-            name="password1"
+            label='Create password'
+            type='password'
+            name='password1'
             InputProps={{
-              endAdornment: 
-                <InputAdornment position="end">
+              endAdornment:
+                <InputAdornment position='end'>
                   <IconButton
-                    aria-label="toggle password visibility"
+                    aria-label='toggle password visibility'
                     onClick={handleClickShowPassword1}
                     tabIndex='-1'
                   >
@@ -114,14 +114,14 @@ const SotreKeyForm = (props) => {
             fullWidth
             error={!!passwordError}
             helperText={passwordError}
-            label="Confirm password"
-            type="password"
-            name="password2"
+            label='Confirm password'
+            type='password'
+            name='password2'
             InputProps={{
-              endAdornment: 
-                <InputAdornment position="end">
+              endAdornment:
+                <InputAdornment position='end'>
                   <IconButton
-                    aria-label="toggle password visibility"
+                    aria-label='toggle password visibility'
                     onClick={handleClickShowPassword2}
                     tabIndex='-1'
                   >
@@ -131,17 +131,18 @@ const SotreKeyForm = (props) => {
             }}
           />
         </div>
-        <div className="submit-form-btn">
+        <div className='submit-form-btn'>
           <Button
-            type="submit"
-            variant="contained"
-            color="primary"
+            type='submit'
+            variant='contained'
+            color='primary'
           >
             Store key
           </Button>
         </div>
       </form>
     </div>
-  )}
+  )
+}
 
 export default SotreKeyForm

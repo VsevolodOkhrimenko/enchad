@@ -12,19 +12,32 @@ import Config from 'config'
 
 const { backendUrl } = Config.network
 
+
+export function resetAuthToken() {
+  return function action(dispatch) {
+    localStorage.setItem('authToken', null)
+    dispatch({
+      type: RESET_TOKEN
+    })
+    if (history.location.pathname !== '/login') {
+      history.push('/login')
+    }
+  }
+}
+
 export function getUserInfo() {
-  const { authToken }  = store.getState().auth
+  const { authToken } = store.getState().auth
   return function action(dispatch) {
     if (!authToken) {
       dispatch(resetAuthToken())
     } else {
-      axios.defaults.headers.common["Authorization"] = "Token ".concat(authToken)
+      axios.defaults.headers.common.Authorization = 'Token '.concat(authToken)
     }
     dispatch({
       type: GET_USER_INFO,
       payload: {
-        userInfoIsLoading: true,
-      },
+        userInfoIsLoading: true
+      }
     })
     let url = `${backendUrl}/api/users/me/`
     axios.get(url).then((body) => {
@@ -32,25 +45,23 @@ export function getUserInfo() {
       dispatch({
         type: SET_USER_INFO,
         payload: {
-          userId: data['id'],
-          username: data['username'],
-          salt: data['user_salt'],
-          userLookupId: data['user_lookup_id']
+          userId: data.id,
+          username: data.username,
+          userSecret: data.user_secret,
+          userLookupId: data.user_lookup_id
         }
 
       })
-      localStorage.setItem('userId', data['id'])
-      localStorage.setItem('username', data['username'])
       dispatch({
         type: GET_USER_INFO,
         payload: {
-          userInfoIsLoading: false,
-        },
+          userInfoIsLoading: false
+        }
       })
     }).catch(error => {
       if (error.response) {
         dispatch(checkErrorStatus(error.response.status))
-        dispatch(setSnackbar(error.response.data['detail'], 'error'))
+        dispatch(setSnackbar(error.response.data.detail, 'error'))
       } else {
         dispatch(setSnackbar('Connection error', 'error'))
       }
@@ -58,34 +69,22 @@ export function getUserInfo() {
   }
 }
 
-export function storeAuthToken(authToken) {
+export function storeAuthToken(authToken, rememberAuthToken) {
   return function action(dispatch) {
-    localStorage.setItem('authToken', authToken)
+    if (rememberAuthToken) {
+      localStorage.setItem('authToken', authToken)
+    }
     dispatch({
       type: SET_TOKEN,
       payload: {
-        authToken,
-      },
+        authToken
+      }
     })
     if (authToken) {
-      axios.defaults.headers.common["Authorization"] = "Token ".concat(authToken)
+      axios.defaults.headers.common.Authorization = 'Token '.concat(authToken)
       dispatch(getUserInfo())
     } else {
-      delete axios.defaults.headers.common["Authorization"]
-    }
-  }
-}
-
-export function resetAuthToken() {
-  return function action(dispatch) {
-    localStorage.setItem('authToken', null)
-    localStorage.setItem('userId', null)
-    localStorage.setItem('username', null)
-    dispatch({
-      type: RESET_TOKEN,
-    })
-    if (history.location.pathname !== '/login') {
-      history.push('/login')
+      delete axios.defaults.headers.common.Authorization
     }
   }
 }
@@ -95,8 +94,8 @@ export function enableAuthLoader(userInfoIsLoading) {
     dispatch({
       type: GET_USER_INFO,
       payload: {
-        userInfoIsLoading: userInfoIsLoading,
-      },
+        userInfoIsLoading: userInfoIsLoading
+      }
     })
   }
 }

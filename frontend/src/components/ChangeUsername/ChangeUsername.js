@@ -44,16 +44,16 @@ const ChangeUsername = () => {
     event.preventDefault()
     const url = `${backendUrl}/api/users/change_username/`
     dispatch(enableAuthLoader(true))
-    dispatchFormErrors({ type: 'reset'})
+    dispatchFormErrors({ type: 'reset' })
     const username = event.target.elements.username.value
     const password = event.target.elements.password.value
     const requestData = {
-      'username': username,
-      'password': password
+      username: username,
+      password: password
     }
     axios.post(url, requestData).then((body) => {
       const { data } = body
-      dispatch(setSnackbar(data['message']))
+      dispatch(setSnackbar(data.message))
       dispatch(enableAuthLoader(false))
       setShowDialog(false)
     }).catch(err => {
@@ -69,7 +69,7 @@ const ChangeUsername = () => {
           dispatchFormErrors({
             type: 'error',
             payload: {
-              'nonField': [err.response.data['detail']]
+              nonField: [err.response.data.detail]
             }
           })
         }
@@ -87,10 +87,10 @@ const ChangeUsername = () => {
     <>
     <ListItem button onClick={() => setShowDialog(true)} >
       <ListItemIcon><AssignmentInd /></ListItemIcon>
-      <ListItemText primary="Change username" />
+      <ListItemText primary='Change username' />
     </ListItem>
     <Dialog
-      maxWidth="sm"
+      maxWidth='sm'
       fullWidth
       open={showDialog}
       onClose={() => setShowDialog(false)}
@@ -98,15 +98,16 @@ const ChangeUsername = () => {
       { userInfoIsLoading ? <Loader /> : null }
       <DialogTitle>Change username</DialogTitle>
       <DialogContent>
-        { getFieldError(formErrors, 'nonField') ? <p className="error-message">{getFieldError(formErrors, 'nonField')}</p> : null }
+        { getFieldError(formErrors, 'nonField') ?
+          <p className='error-message'>{getFieldError(formErrors, 'nonField')}</p> : null }
         <form onSubmit={changeUsernameSubmit} ref={formRef} >
           <div>
             <TextField
               error={!!getFieldError(formErrors, 'username')}
               helperText={getFieldError(formErrors, 'username')}
-              label="New username"
-              type="text"
-              name="username"
+              label='New username'
+              type='text'
+              name='username'
               fullWidth
             />
           </div>
@@ -114,15 +115,15 @@ const ChangeUsername = () => {
             <TextField
               error={!!getFieldError(formErrors, 'password')}
               helperText={getFieldError(formErrors, 'password')}
-              label="Current password"
+              label='Current password'
               type={showPassword ? 'text' : 'password'}
-              name="password"
+              name='password'
               fullWidth
               InputProps={{
-                endAdornment: 
-                  <InputAdornment position="end">
+                endAdornment:
+                  <InputAdornment position='end'>
                     <IconButton
-                      aria-label="toggle password visibility"
+                      aria-label='toggle password visibility'
                       onClick={handleClickShowPassword}
                       tabIndex='-1'
                     >
@@ -135,20 +136,21 @@ const ChangeUsername = () => {
         </form>
         <DialogActions>
           <Button
-            type="submit"
+            type='submit'
             onClick={() => formRef.current.dispatchEvent(new Event('submit'))}
-            variant="contained"
-            color="primary"
+            variant='contained'
+            color='primary'
           >
             Submit
           </Button>
-          <Button variant="contained" onClick={() => setShowDialog(false)} color="primary">
+          <Button variant='contained' onClick={() => setShowDialog(false)} color='primary'>
             Close
           </Button>
         </DialogActions>
       </DialogContent>
     </Dialog>
     </>
-  )}
+  )
+}
 
 export default ChangeUsername

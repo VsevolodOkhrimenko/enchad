@@ -4,14 +4,14 @@ from chat.utils.encrypt import symmetric_decrypt
 
 
 class UserSerializer(ModelSerializer):
-    user_salt = SerializerMethodField('_user_salt', read_only=True)
+    user_secret = SerializerMethodField('_user_secret', read_only=True)
 
-    def _user_salt(self, obj):
-        return symmetric_decrypt(obj.user_salt)
+    def _user_secret(self, obj):
+        return symmetric_decrypt(obj.user_secret)
 
     class Meta:
         model = User
-        fields = ["id", "username", "user_salt", "user_lookup_id"]
+        fields = ["id", "username", "user_secret", "user_lookup_id"]
 
 
 class PublicUserSerializer(ModelSerializer):

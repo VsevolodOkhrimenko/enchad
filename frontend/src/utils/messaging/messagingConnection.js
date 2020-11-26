@@ -19,9 +19,9 @@ export function closeWebsocketConnection() {
     ws.close()
     ws = null
   }
-} 
+}
 
-export default function messagingConnection(authToken, close) {
+export default function messagingConnection(authToken) {
   return function action(dispatch) {
     let wsClose
     let connectionAttempts = 0
@@ -36,9 +36,9 @@ export default function messagingConnection(authToken, close) {
 
     function playAudio(audio) {
       const playPromise = audio.play()
-      if (playPromise !== undefined) {
-        playPromise.then(function() {
-        }).catch(function(error) {
+      if (typeof playPromise !== 'undefined') {
+        playPromise.then(function () {
+        }).catch(function (error) {
           console.log(error)
         })
       }
@@ -52,24 +52,37 @@ export default function messagingConnection(authToken, close) {
     }
 
     function wsMessage(event) {
-      const parsed = JSON.parse(event["data"])
-      if (parsed["type"] === "chat.message") {
-        dispatch(wsAppendMessage(parsed["payload"]))
-        playAudio(messageAudio)
-      } else if (parsed["type"] === "chat.read") {
-        dispatch(wsReadMessages(parsed["payload"]))
-      } else if (parsed["type"] === "thread.create") {
-        dispatch(wsAppendThread(parsed["payload"]))
-        playAudio(notificationAudio)
-      } else if (parsed["type"] === "thread.update") {
-        dispatch(wsUpdateCurrentThread(parsed["payload"]))
-        playAudio(notificationAudio)
+      const isMobileApp = !!window.ReactNativeWebView
+      const parsed = JSON.parse(event.data)
+      if (parsed.type === 'chat.message') {
+        dispatch(wsAppendMessage(parsed.payload))
+        if (isMobileApp) {
+          window.ReactNativeWebView.postMessage(event.data)
+        } else {
+          playAudio(messageAudio)
+        }
+      } else if (parsed.type === 'chat.read') {
+        dispatch(wsReadMessages(parsed.payload))
+      } else if (parsed.type === 'thread.create') {
+        dispatch(wsAppendThread(parsed.payload))
+        if (isMobileApp) {
+          window.ReactNativeWebView.postMessage(event.data)
+        } else {
+          playAudio(notificationAudio)
+        }
+      } else if (parsed.type === 'thread.update') {
+        dispatch(wsUpdateCurrentThread(parsed.payload))
+        if (isMobileApp) {
+          window.ReactNativeWebView.postMessage(event.data)
+        } else {
+          playAudio(notificationAudio)
+        }
       }
     }
 
     function connect() {
       const endpoint = `${wsUrl}/messaging/`
-      const authHeader = "Token"
+      const authHeader = 'Token'
       if (authToken) {
         ws = new WebSocket(endpoint, [authHeader, authToken])
         ws.onmessage = wsMessage
@@ -77,20 +90,21 @@ export default function messagingConnection(authToken, close) {
         ws.onerror = wsError
         ws.onclose = wsClose
         connectionAttempts = 0
+        dispatch(setSnackbar(null))
       }
     }
 
     wsClose = function close() {
-      connectionAttempts += 1
+      connectionAttempts = connectionAttempts + 1
       if (connectionAttempts < 3 && tryReconnect) {
         console.log('Connection closed. Try to reconnect in 3 sec...')
-        setTimeout(() => {
-          connect()
-        }, 3000)
       }
       if (connectionAttempts === 3) {
         dispatch(setSnackbar('WebSocket connectin error. Please reload the page', 'error'))
       }
+      setTimeout(() => {
+        connect()
+      }, 3000)
     }
 
     connect()

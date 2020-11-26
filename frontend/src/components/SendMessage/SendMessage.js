@@ -41,11 +41,11 @@ const SendMessage = () => {
       const { data } = body
       setIsLoading(false)
       dispatch(appendMessage(data))
-    }).catch(error => {
+    }).catch(err => {
       setIsLoading(false)
-      if (error.response) {
-        dispatch(checkErrorStatus(error.response.status))
-        setError(error.response.data['detail'])
+      if (err.response) {
+        dispatch(checkErrorStatus(err.response.status))
+        setError(err.response.data.detail)
       } else {
         setError('Something went wrong...', null)
       }
@@ -74,7 +74,7 @@ const SendMessage = () => {
   }
 
   return (
-    <form id="messagesForm" onSubmit={ isLoading ? null : sendMessageSubmit } >
+    <form id='messagesForm' onSubmit={ isLoading ? null : sendMessageSubmit } >
       { isLoading ?
         <Loader /> : null
       }
@@ -84,25 +84,26 @@ const SendMessage = () => {
         multiline
         fullWidth
         autoFocus={true}
-        id="messageTextInput"
+        id='messageTextInput'
         rows={2}
-        variant="outlined"
-        name="message"
+        variant='outlined'
+        name='message'
         onKeyDown={ isLoading ? null : onEnterPress }
         InputProps={{
-          endAdornment: 
-            <InputAdornment position="end">
+          endAdornment:
+            <InputAdornment position='end'>
               <IconButton
-                aria-label="toggle password visibility"
-                type="submit"
-                color="primary"
+                aria-label='toggle password visibility'
+                type='submit'
+                color='primary'
               >
-                <Send variant="rounded" />
+                <Send variant='rounded' />
               </IconButton>
             </InputAdornment>
         }}
       />
     </form>
-  )}
+  )
+}
 
 export default SendMessage

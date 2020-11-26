@@ -6,8 +6,8 @@ import store from 'store'
 
 function arrayToUnreadsDict(threads) {
   const unreadDict = {}
-  for (let i = 0, length = threads.length; i < length; i += 1) {
-    unreadDict[threads[i]['id']] = threads[i]['unread_count']
+  for (let i = 0, length = threads.length; i < length; i = i + 1) {
+    unreadDict[threads[i].id] = threads[i].unread_count
   }
   return unreadDict
 }
@@ -19,11 +19,11 @@ export function setThreads(threadsData) {
     dispatch({
       type: SET_THREADS,
       payload: {
-        threads: [...threadsData['results'], ...threads],
-        nextThreadUrl: threadsData['next']
+        threads: [...threadsData.results, ...threads],
+        nextThreadUrl: threadsData.next
       }
     })
 
-    dispatch(updateUnreadCount(threadsData['unread_count'], arrayToUnreadsDict(threadsData['results'])))
+    dispatch(updateUnreadCount(threadsData.unread_count, arrayToUnreadsDict(threadsData.results)))
   }
 }

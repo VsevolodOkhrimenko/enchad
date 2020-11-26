@@ -31,15 +31,15 @@ const CreateThread = () => {
       const { data } = body
       dispatch(appendThread(data))
       setIsLoading(false)
-    }).catch(error => {
+    }).catch(err => {
       setIsLoading(false)
       if (error.response) {
-        dispatch(checkErrorStatus(error.response.status))
-        if (error.response.status === 302) {
+        dispatch(checkErrorStatus(err.response.status))
+        if (err.response.status === 302) {
           setError(null)
-          history.push(error.response.data['id'])
+          history.push(err.response.data.id)
         } else {
-          setError(error.response.data['detail'])
+          setError(err.response.data.detail)
         }
       } else {
         setError('Connection error')
@@ -66,23 +66,23 @@ const CreateThread = () => {
   }
 
   return (
-    <form id="createThread" onSubmit={ isLoading ? null : createThreadSubmit } >
+    <form id='createThread' onSubmit={ isLoading ? null : createThreadSubmit } >
       { isLoading ? <Loader /> : null }
         <TextField
           error={!!error}
           helperText={error}
           fullWidth
-          autoComplete="off"
-          label="Create thread"
-          type="text"
-          name="user"
+          autoComplete='off'
+          label='Create thread'
+          type='text'
+          name='user'
           onKeyDown={ isLoading ? null : onEnterPress }
           InputProps={{
-            endAdornment: 
-              <InputAdornment position="end">
+            endAdornment:
+              <InputAdornment position='end'>
                 <IconButton
-                  aria-label="create thread"
-                  type="submit"
+                  aria-label='create thread'
+                  type='submit'
                 >
                   <PersonAdd />
                 </IconButton>
@@ -90,6 +90,7 @@ const CreateThread = () => {
           }}
         />
     </form>
-  )}
+  )
+}
 
 export default CreateThread

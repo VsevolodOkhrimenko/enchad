@@ -46,18 +46,18 @@ const ChangePassword = () => {
     event.preventDefault()
     const url = `${backendUrl}/api/users/change_password/`
     dispatch(enableAuthLoader(true))
-    dispatchFormErrors({ type: 'reset'})
+    dispatchFormErrors({ type: 'reset' })
     const oldPassword = event.target.elements.password.value
     const password1 = event.target.elements.new_password.value
     const password2 = event.target.elements.new_password2.value
     const requestData = {
-      'password': oldPassword,
-      'new_password': password1,
-      'new_password2': password2
+      password: oldPassword,
+      new_password: password1,
+      new_password2: password2
     }
     axios.post(url, requestData).then((body) => {
       const { data } = body
-      dispatch(setSnackbar(data['message']))
+      dispatch(setSnackbar(data.message))
       dispatch(enableAuthLoader(false))
       setShowDialog(false)
     }).catch(error => {
@@ -73,7 +73,7 @@ const ChangePassword = () => {
           dispatchFormErrors({
             type: 'error',
             payload: {
-              'nonField': [error.response.data['detail']]
+              nonField: [error.response.data.detail]
             }
           })
         }
@@ -99,10 +99,10 @@ const ChangePassword = () => {
     <>
     <ListItem button onClick={() => setShowDialog(true)} >
       <ListItemIcon><Lock /></ListItemIcon>
-      <ListItemText primary="Change user password" />
+      <ListItemText primary='Change user password' />
     </ListItem>
     <Dialog
-      maxWidth="sm"
+      maxWidth='sm'
       fullWidth
       open={showDialog}
       onClose={() => setShowDialog(false)}
@@ -110,21 +110,22 @@ const ChangePassword = () => {
       { userInfoIsLoading ? <Loader /> : null }
       <DialogTitle>Change password</DialogTitle>
       <DialogContent>
-        { getFieldError(formErrors, 'nonField') ? <p className="error-message">{getFieldError(formErrors, 'nonField')}</p> : null }
+        { getFieldError(formErrors, 'nonField') ?
+          <p className='error-message'>{getFieldError(formErrors, 'nonField')}</p> : null }
         <form onSubmit={changePasswordSubmit} ref={formRef} >
           <div>
             <TextField
               error={!!getFieldError(formErrors, 'password')}
               helperText={getFieldError(formErrors, 'password')}
-              label="Current password"
+              label='Current password'
               type={showPassword ? 'text' : 'password'}
-              name="password"
+              name='password'
               fullWidth
               InputProps={{
-                endAdornment: 
-                  <InputAdornment position="end">
+                endAdornment:
+                  <InputAdornment position='end'>
                     <IconButton
-                      aria-label="toggle password visibility"
+                      aria-label='toggle password visibility'
                       onClick={handleClickShowPassword}
                       tabIndex='-1'
                     >
@@ -138,15 +139,15 @@ const ChangePassword = () => {
             <TextField
               error={!!getFieldError(formErrors, 'new_password')}
               helperText={getFieldError(formErrors, 'new_password')}
-              label="New password"
+              label='New password'
               type={showNewPassword ? 'text' : 'password'}
-              name="new_password"
+              name='new_password'
               fullWidth
               InputProps={{
-                endAdornment: 
-                  <InputAdornment position="end">
+                endAdornment:
+                  <InputAdornment position='end'>
                     <IconButton
-                      aria-label="toggle password visibility"
+                      aria-label='toggle password visibility'
                       onClick={handleClickShowNewPassword}
                       tabIndex='-1'
                     >
@@ -160,15 +161,15 @@ const ChangePassword = () => {
             <TextField
               error={!!getFieldError(formErrors, 'new_password2')}
               helperText={getFieldError(formErrors, 'new_password2')}
-              label="Confirm new password"
+              label='Confirm new password'
               type={showNewPassword2 ? 'text' : 'password'}
-              name="new_password2"
+              name='new_password2'
               fullWidth
               InputProps={{
-                endAdornment: 
-                  <InputAdornment position="end">
+                endAdornment:
+                  <InputAdornment position='end'>
                     <IconButton
-                      aria-label="toggle password visibility"
+                      aria-label='toggle password visibility'
                       onClick={handleClickShowNewPassword2}
                       tabIndex='-1'
                     >
@@ -181,20 +182,21 @@ const ChangePassword = () => {
         </form>
         <DialogActions>
           <Button
-            type="submit"
+            type='submit'
             onClick={() => formRef.current.dispatchEvent(new Event('submit'))}
-            variant="contained"
-            color="primary"
+            variant='contained'
+            color='primary'
           >
             Submit
           </Button>
-          <Button variant="contained" onClick={() => setShowDialog(false)} color="primary">
+          <Button variant='contained' onClick={() => setShowDialog(false)} color='primary'>
             Close
           </Button>
         </DialogActions>
       </DialogContent>
     </Dialog>
     </>
-  )}
+  )
+}
 
 export default ChangePassword

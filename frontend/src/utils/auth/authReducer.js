@@ -11,13 +11,13 @@ const initialState = {
   userId: null,
   username: null,
   userLookupId: null,
-  salt: null,
+  userSecret: null,
   userInfoIsLoading: false,
-  getUserInfoError: null,
+  getUserInfoError: null
 }
 
 const authReducer = (state = initialState, action) => {
-  switch(action.type) {
+  switch (action.type) {
     case SET_TOKEN:
       return {
         ...state,
@@ -35,7 +35,7 @@ const authReducer = (state = initialState, action) => {
         getUserInfoError: null,
         userId: action.payload.userId,
         username: action.payload.username,
-        salt: action.payload.salt,
+        userSecret: action.payload.userSecret,
         userLookupId: action.payload.userLookupId
       }
     case GET_USER_INFO_ERROR:

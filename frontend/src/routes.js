@@ -25,10 +25,10 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
     render={props => (
       rest.authToken ?
         <Component {...props} />
-        : <Redirect to="/login" />
+        : <Redirect to='/login' />
     )}
   />
-);
+)
 
 const Routes = () => {
   const dispatch = useDispatch()
@@ -39,12 +39,12 @@ const Routes = () => {
 
   const theme = createMuiTheme({
       palette: {
-        type: useDarkTheme ? 'dark' : 'light',
-      },
+        type: useDarkTheme ? 'dark' : 'light'
+      }
     })
 
   function snackbarIcon(type) {
-    switch(type) {
+    switch (type) {
       case 'error':
         return <ErrorOutline />
       case 'warning':
@@ -56,11 +56,11 @@ const Routes = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Paper className="app-wrapper" square>
+      <Paper className='app-wrapper' square>
         <Suspense fallback={<Loader />}>
           <Switch>
-            <Route exact path="/login" component={LoginPage} />
-            <PrivateRoute authToken={authToken} path="/:thread_id?" component={MessagingPage} />
+            <Route exact path='/login' component={LoginPage} />
+            <PrivateRoute authToken={authToken} path='/:thread_id?' component={MessagingPage} />
           </Switch>
         </Suspense>
         <Snackbar

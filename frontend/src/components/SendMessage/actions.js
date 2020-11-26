@@ -18,9 +18,9 @@ export function appendMessage(message) {
           nextUrl: nextUrl
         }
       })
-      const index = findIndexById(threads, message["thread"])
+      const index = findIndexById(threads, message.thread)
       if (index !== 0) {
-        const reordered = moveToFirstById(threads, message["thread"])
+        const reordered = moveToFirstById(threads, message.thread)
         dispatch({
           type: SET_THREADS,
           payload: {

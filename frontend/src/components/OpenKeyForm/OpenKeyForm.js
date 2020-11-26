@@ -29,8 +29,10 @@ const OpenKeyForm = (props) => {
   const isMobile = checkMobile()
 
   useEffect(() => {
-    return () => { dispatch(setEncryptionError(null)) }
-  }, [])
+    return () => {
+ dispatch(setEncryptionError(null))
+}
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const openKeySubmit = (event) => {
     event.preventDefault()
@@ -65,23 +67,23 @@ const OpenKeyForm = (props) => {
   }
 
   return (
-    <div className="form key-form">
-      { encryptionError ? <p className="error-message">{encryptionError}</p> : null}
+    <div className='form key-form'>
+      { encryptionError ? <p className='error-message'>{encryptionError}</p> : null}
       <form onSubmit={openKeySubmit}>
         <div>
           <TextField
             error={!!passwordError || !!encryptionError}
             helperText={passwordError}
-            label="Password"
+            label='Password'
             type={showPassword ? 'text' : 'password'}
-            name="password"
+            name='password'
             autoFocus={true}
             fullWidth
             InputProps={{
-              endAdornment: 
-                <InputAdornment position="end">
+              endAdornment:
+                <InputAdornment position='end'>
                   <IconButton
-                    aria-label="toggle password visibility"
+                    aria-label='toggle password visibility'
                     onClick={handleClickShowPassword}
                     tabIndex='-1'
                   >
@@ -91,17 +93,18 @@ const OpenKeyForm = (props) => {
             }}
           />
         </div>
-        <div className="submit-form-btn">
+        <div className='submit-form-btn'>
           <Button
-            type="submit"
-            variant="contained"
-            color="primary"
+            type='submit'
+            variant='contained'
+            color='primary'
           >
             Open key
           </Button>
         </div>
       </form>
     </div>
-  )}
+  )
+}
 
 export default OpenKeyForm
