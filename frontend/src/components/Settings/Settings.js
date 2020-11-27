@@ -48,7 +48,7 @@ const Settings = () => {
       disableDiscovery={iOS && !isMobileApp}
       disableSwipeToOpen={!isMobileApp}
       classes={{
-        paper: 'settings-sidebar'
+        paper: `settings-sidebar ${isMobile ? 'mobile' : ''}`
       }}
     >
       <List>

@@ -1,5 +1,15 @@
 .threads-sidebar {
   width: 300px;
+  padding-top: 8px;
+  &.mobile {
+    width: 100%;
+  }
+  .close-drawer {
+    justify-content: flex-end;
+    .MuiListItemIcon-root {
+      min-width: auto;
+    }
+  }
 }
 #threadsList {
   max-height: calc(100vh - 65px);

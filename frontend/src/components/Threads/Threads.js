@@ -5,8 +5,10 @@ import {
   SwipeableDrawer,
   List,
   ListItem,
-  Divider
+  Divider,
+  ListItemIcon
 } from '@material-ui/core'
+import { KeyboardArrowLeft } from '@material-ui/icons'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { resetThreads } from 'utils/messaging/actions'
@@ -99,15 +101,20 @@ const Threads = () => {
       disableDiscovery={iOS && !isMobileApp}
       disableSwipeToOpen={!isMobileApp}
       classes={{
-        paper: 'threads-sidebar'
+        paper: `threads-sidebar ${isMobile ? 'mobile' : ''}`
+
       }}
     >
-      <List disablePadding onClick={isMobile ? () => dispatch(enableThreadsSidebar(false)) : null}>
+      <List disablePadding>
+        <ListItem className="close-drawer" button onClick={() => dispatch(enableThreadsSidebar(false))}>
+          <ListItemIcon><KeyboardArrowLeft /></ListItemIcon>
+        </ListItem>
+        <Divider />
         <ListItem>
           <CreateThread />
         </ListItem>
         <Divider />
-        <div id='threadsList' onScroll={ threadsListScroll }>
+        <div id='threadsList' onClick={isMobile ? () => dispatch(enableThreadsSidebar(false)) : null} onScroll={ threadsListScroll }>
           { isLoading ? <Loader /> : null }
           { error ? <p className='error-message'>{error}</p> : null }
           {renderThreads()}
