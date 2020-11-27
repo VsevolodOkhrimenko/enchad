@@ -4,26 +4,21 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   TextField,
-  DialogActions,
-  Button,
   InputAdornment,
   IconButton
 } from '@material-ui/core'
 import {
   AssignmentInd,
   Visibility,
-  VisibilityOff
+  VisibilityOff,
 } from '@material-ui/icons'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { enableAuthLoader } from 'utils/auth/actions'
 import { checkErrorStatus, setSnackbar } from 'utils/common/actions'
 import { formReducer, getFieldError } from 'helpers/forms'
-import Loader from 'components/Loader'
+import CustomDialog from 'components/CustomDialog'
 import Config from 'config'
 
 const initFormsState = {
@@ -89,66 +84,50 @@ const ChangeUsername = () => {
       <ListItemIcon><AssignmentInd /></ListItemIcon>
       <ListItemText primary='Change username' />
     </ListItem>
-    <Dialog
-      maxWidth='sm'
-      fullWidth
+    <CustomDialog
       open={showDialog}
       onClose={() => setShowDialog(false)}
+      header="Change username"
+      isLoading={userInfoIsLoading}
+      action={() => formRef.current.dispatchEvent(new Event('submit'))}
     >
-      { userInfoIsLoading ? <Loader /> : null }
-      <DialogTitle>Change username</DialogTitle>
-      <DialogContent>
-        { getFieldError(formErrors, 'nonField') ?
-          <p className='error-message'>{getFieldError(formErrors, 'nonField')}</p> : null }
-        <form onSubmit={changeUsernameSubmit} ref={formRef} >
-          <div>
-            <TextField
-              error={!!getFieldError(formErrors, 'username')}
-              helperText={getFieldError(formErrors, 'username')}
-              label='New username'
-              type='text'
-              name='username'
-              fullWidth
-            />
-          </div>
-          <div>
-            <TextField
-              error={!!getFieldError(formErrors, 'password')}
-              helperText={getFieldError(formErrors, 'password')}
-              label='Current password'
-              type={showPassword ? 'text' : 'password'}
-              name='password'
-              fullWidth
-              InputProps={{
-                endAdornment:
-                  <InputAdornment position='end'>
-                    <IconButton
-                      aria-label='toggle password visibility'
-                      onClick={handleClickShowPassword}
-                      tabIndex='-1'
-                    >
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-              }}
-            />
-          </div>
-        </form>
-        <DialogActions>
-          <Button
-            type='submit'
-            onClick={() => formRef.current.dispatchEvent(new Event('submit'))}
-            variant='contained'
-            color='primary'
-          >
-            Submit
-          </Button>
-          <Button variant='contained' onClick={() => setShowDialog(false)} color='primary'>
-            Close
-          </Button>
-        </DialogActions>
-      </DialogContent>
-    </Dialog>
+      { getFieldError(formErrors, 'nonField') ?
+        <p className='error-message'>{getFieldError(formErrors, 'nonField')}</p> : null }
+      <form onSubmit={changeUsernameSubmit} ref={formRef} >
+        <div>
+          <TextField
+            error={!!getFieldError(formErrors, 'username')}
+            helperText={getFieldError(formErrors, 'username')}
+            label='New username'
+            type='text'
+            name='username'
+            fullWidth
+          />
+        </div>
+        <div>
+          <TextField
+            error={!!getFieldError(formErrors, 'password')}
+            helperText={getFieldError(formErrors, 'password')}
+            label='Current password'
+            type={showPassword ? 'text' : 'password'}
+            name='password'
+            fullWidth
+            InputProps={{
+              endAdornment:
+                <InputAdornment position='end'>
+                  <IconButton
+                    aria-label='toggle password visibility'
+                    onClick={handleClickShowPassword}
+                    tabIndex='-1'
+                  >
+                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+            }}
+          />
+        </div>
+      </form>
+    </CustomDialog>
     </>
   )
 }

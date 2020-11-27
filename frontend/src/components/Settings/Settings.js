@@ -30,6 +30,7 @@ import history from 'browserHistory'
 
 const Settings = () => {
   const { thread_id } = useParams()
+  const isMobileApp = !!window.ReactNativeWebView
   const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent)
   const isMobile = checkMobile()
   const dispatch = useDispatch()
@@ -44,7 +45,8 @@ const Settings = () => {
       onClose={() => dispatch(enableSettingsSidebar(false))}
       onOpen={() => dispatch(enableSettingsSidebar(true))}
       disableBackdropTransition={!iOS}
-      disableDiscovery={iOS}
+      disableDiscovery={iOS && !isMobileApp}
+      disableSwipeToOpen={!isMobileApp}
       classes={{
         paper: 'settings-sidebar'
       }}

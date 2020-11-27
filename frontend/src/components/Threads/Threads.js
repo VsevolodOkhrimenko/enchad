@@ -22,6 +22,7 @@ import Config from 'config'
 const Threads = () => {
   const { backendUrl } = Config.network
   const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent)
+  const isMobileApp = !!window.ReactNativeWebView
   const dispatch = useDispatch()
   const { thread_id } = useParams()
   const isMobile = checkMobile()
@@ -95,7 +96,8 @@ const Threads = () => {
       onClose={() => dispatch(enableThreadsSidebar(false))}
       onOpen={() => dispatch(enableThreadsSidebar(true))}
       disableBackdropTransition={!iOS}
-      disableDiscovery={iOS}
+      disableDiscovery={iOS && !isMobileApp}
+      disableSwipeToOpen={!isMobileApp}
       classes={{
         paper: 'threads-sidebar'
       }}

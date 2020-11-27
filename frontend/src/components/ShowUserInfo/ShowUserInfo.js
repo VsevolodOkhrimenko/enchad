@@ -4,19 +4,14 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button
+  DialogContentText
 } from '@material-ui/core'
 import { PersonPin } from '@material-ui/icons'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserInfo, enableAuthLoader } from 'utils/auth/actions'
 import { checkErrorStatus, setSnackbar } from 'utils/common/actions'
-import Loader from 'components/Loader'
+import CustomDialog from 'components/CustomDialog'
 import Config from 'config'
 
 const ShowUserInfo = () => {
@@ -51,35 +46,22 @@ const ShowUserInfo = () => {
       <ListItemIcon><PersonPin /></ListItemIcon>
       <ListItemText primary='Show my user info' />
     </ListItem>
-    <Dialog
-      maxWidth='sm'
-      fullWidth
+    <CustomDialog
+      header="User Info"
       open={showDialog}
       onClose={() => setShowDialog(false)}
       onEnter={() => dispatch(getUserInfo())}
+      isLoading={userInfoIsLoading}
+      action={resetLookupId}
+      actionText="Reset Search ID"
     >
-      { userInfoIsLoading ? <Loader /> : null }
-      <DialogTitle>User Info</DialogTitle>
-      <DialogContent>
         <DialogContentText>
           Username: {username}
         </DialogContentText>
         <DialogContentText>
           User Lookup Id: {userLookupId}
-          <Button
-            onClick={resetLookupId}
-            color='primary'
-          >
-            Reset
-          </Button>
         </DialogContentText>
-        <DialogActions>
-          <Button variant='contained' onClick={() => setShowDialog(false)} color='primary'>
-            Close
-          </Button>
-        </DialogActions>
-      </DialogContent>
-    </Dialog>
+    </CustomDialog>
     </>
   )
 }

@@ -1,11 +1,6 @@
 import './Messaging.scss'
 import React, { useEffect } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  Button,
-  DialogTitle
-} from '@material-ui/core'
+import { Button } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import DocumentTitle from 'react-document-title'
@@ -18,6 +13,7 @@ import {
 import { setEncryptedPrivateKey, resetKeys } from 'utils/encryption/actions'
 import { enableKeysModal } from 'utils/common/actions'
 import Message from 'components/Message'
+import CustomDialog from 'components/CustomDialog'
 import Loader from 'components/Loader'
 import SotreKeyForm from 'components/SotreKeyForm'
 import OpenKeyForm from 'components/OpenKeyForm'
@@ -122,7 +118,7 @@ const Messaging = () => {
       {activeOpponentPublicKey && activePublicKey ?
         <SendMessage /> : null
       }
-      <Dialog
+      <CustomDialog
         open={keysModalIsVisible}
         onClose={
           () => {
@@ -130,21 +126,11 @@ const Messaging = () => {
             dispatch(setEncryptedPrivateKey(thread_id))
           }
         }
-        aria-labelledby='simple-modal-title'
-        aria-describedby='simple-modal-description'
-        maxWidth='sm'
-        fullWidth={true}
+        header={encryptedPrivateKey ? 'Open key' : 'Create key'}
       >
-        <DialogTitle
-          id='dialogTitle'
-        >
-          {encryptedPrivateKey ? 'Open key' : 'Create key'}
-        </DialogTitle>
-        <DialogContent>
-          {encryptedPrivateKey ?
-            <OpenKeyForm threadId={thread_id} /> : <SotreKeyForm threadId={thread_id} />}
-        </DialogContent>
-      </Dialog>
+        {encryptedPrivateKey ?
+          <OpenKeyForm threadId={thread_id} /> : <SotreKeyForm threadId={thread_id} />}
+      </CustomDialog>
     </div>
   )
 }
