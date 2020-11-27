@@ -91,7 +91,7 @@ const Messaging = () => {
           `${activeOpponentPublicKey && activePublicKey && encryptedPrivateKey ? 'ready' : ''}`}
         onScroll={threadScroll}
       >
-        { isLoadingMessages ? <Loader /> : null }
+        { isLoadingMessages && <Loader /> }
 
         { !isLoadingMessages && (!activeOpponentPublicKey || !activePublicKey) ?
           <div className='chat-not-initiated'>
