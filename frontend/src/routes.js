@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 import { Paper, Snackbar } from '@material-ui/core'
 import {
@@ -36,6 +36,16 @@ const Routes = () => {
   const useDarkTheme = useSelector(state => state.common.useDarkTheme)
   const snackbarMessage = useSelector(state => state.common.snackbarMessage)
   const snackbarType = useSelector(state => state.common.snackbarType)
+
+  useEffect(()=> {
+    const isMobileApp = !!window.ReactNativeWebView
+    if (isMobileApp) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'theme.change',
+        useDarkTheme: useDarkTheme
+      }))
+    }
+  }, [useDarkTheme])
 
   const theme = createMuiTheme({
       palette: {

@@ -46,8 +46,8 @@ class TokenAuthMiddleware:
         return self.inner(scope)
 
 
-TokenAuthMiddlewareStack = lambda inner: TokenAuthMiddleware(
-    AuthMiddlewareStack(inner))
+def TokenAuthMiddlewareStack(inner):
+    return TokenAuthMiddleware(AuthMiddlewareStack(inner))
 
 
 class ExpiringTokenAuthentication(TokenAuthentication):
