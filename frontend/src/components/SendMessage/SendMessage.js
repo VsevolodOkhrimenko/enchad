@@ -10,7 +10,7 @@ import { Send } from '@material-ui/icons'
 import { encrypt } from 'helpers/encryption'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { checkErrorStatus } from 'utils/common/actions'
+import { checkErrorStatus, setSnackbar } from 'utils/common/actions'
 import { appendMessage } from './actions'
 import Loader from 'components/Loader'
 import Config from 'config'
@@ -37,6 +37,7 @@ const SendMessage = () => {
         text: encrypt(message, activeOpponentPublicKey)
       }
     }
+    setError(null)
     axios.post(url, encryptedMessageData).then((body) => {
       const { data } = body
       setIsLoading(false)
@@ -45,6 +46,7 @@ const SendMessage = () => {
       setIsLoading(false)
       if (err.response) {
         dispatch(checkErrorStatus(err.response.status))
+        dispatch(setSnackbar(err.response.data.detail, 'error'))
         setError(err.response.data.detail)
       } else {
         setError('Something went wrong...', null)
@@ -80,7 +82,6 @@ const SendMessage = () => {
       }
       <TextField
         error={!!error}
-        helperText={error}
         multiline
         fullWidth
         autoFocus={true}
