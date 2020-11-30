@@ -256,7 +256,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "config.csrf_exempt_session_auth.CsrfExemptSessionAuthentication",
         "rest_framework.authentication.BasicAuthentication",
-        "config.token_auth.ExpiringTokenAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ),
     "DEFAULT_RENDERER_CLASSES": (
         "rest_framework.renderers.JSONRenderer",

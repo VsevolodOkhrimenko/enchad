@@ -1,6 +1,6 @@
-from datetime import datetime, timedelta
+# from datetime import datetime, timedelta
 from channels.auth import AuthMiddlewareStack
-from rest_framework.authentication import TokenAuthentication
+# from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import APIException
 from rest_framework.authtoken.models import Token
 
@@ -40,9 +40,9 @@ class TokenAuthMiddleware:
                 raise UnauthorizedException('Invalid token')
             if not token.user.is_active:
                 raise UnauthorizedException('User inactive or deleted')
-            utc_now = datetime.utcnow()
-            if token.created < utc_now - timedelta(hours=24):
-                raise UnauthorizedException('Token has expired')
+            # utc_now = datetime.utcnow()
+            # if token.created < utc_now - timedelta(hours=24):
+            #     raise UnauthorizedException('Token has expired')
         return self.inner(scope)
 
 
@@ -50,15 +50,15 @@ def TokenAuthMiddlewareStack(inner):
     return TokenAuthMiddleware(AuthMiddlewareStack(inner))
 
 
-class ExpiringTokenAuthentication(TokenAuthentication):
-    def authenticate_credentials(self, key):
-        try:
-            token = Token.objects.select_related('user').get(key=key)
-        except Token.DoesNotExist:
-            raise UnauthorizedException('Invalid token')
-        if not token.user.is_active:
-            raise UnauthorizedException('User inactive or deleted')
-        utc_now = datetime.utcnow()
-        if token.created < utc_now - timedelta(hours=24):
-            raise UnauthorizedException('Token has expired')
-        return token.user, token
+# class ExpiringTokenAuthentication(TokenAuthentication):
+#     def authenticate_credentials(self, key):
+#         try:
+#             token = Token.objects.select_related('user').get(key=key)
+#         except Token.DoesNotExist:
+#             raise UnauthorizedException('Invalid token')
+#         if not token.user.is_active:
+#             raise UnauthorizedException('User inactive or deleted')
+#         utc_now = datetime.utcnow()
+#         if token.created < utc_now - timedelta(hours=24):
+#             raise UnauthorizedException('Token has expired')
+#         return token.user, token

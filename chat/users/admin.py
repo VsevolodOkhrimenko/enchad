@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth import get_user_model
-from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.admin import TokenAdmin
+# from rest_framework.authtoken.models import Token
+# from rest_framework.authtoken.admin import TokenAdmin
 
 from chat.users.forms import UserChangeForm, UserCreationForm
 
@@ -17,10 +17,10 @@ class UserAdmin(UserAdmin):
     list_display = ["username", "is_superuser"]
 
 
-class ExpiringTokenAdmin(TokenAdmin):
-    fields = ('user', 'created',)
-    readonly_fields = ('created',)
+# class ExpiringTokenAdmin(TokenAdmin):
+#     fields = ('user', 'created',)
+#     readonly_fields = ('created',)
 
 
-admin.site.unregister(Token)
-admin.site.register(Token, ExpiringTokenAdmin)
+# admin.site.unregister(Token)
+# admin.site.register(Token, ExpiringTokenAdmin)
