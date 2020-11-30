@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.response import Response
@@ -82,6 +83,36 @@ class UserViewSet(RetrieveModelMixin,
         return Response({
             'password': ['Incorrect password']},
             status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["POST"])
+    def register(self, request):
+        if not request.user.is_anonymous:
+            return Response({'detail': [
+                'You can\'t create account while authentificated']},
+                status=status.HTTP_401_UNAUTHORIZED)
+        password = request.data['password']
+        password2 = request.data['password2']
+        email = request.data['email']
+        username = request.data['email']
+        if password != password2:
+            return Response({
+                'password': ['Passwords are not equal'],
+                'password2': ['Passwords are not equal']},
+                status=status.HTTP_400_BAD_REQUEST)
+        if len(password) < PASSSWOR_MIN_LEN:
+            return Response({
+                'password': [
+                    'Password minimum length: {} symbolsl'.format(
+                        PASSSWOR_MIN_LEN)]},
+                status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.serializer_class(
+            data={'username': username, 'password': password, 'email': email})
+        if serializer.is_valid():
+            user = serializer.save()
+            token = Token.objects.create(user=user)
+            return Response({'token': token.key})
+        return Response(serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
 
     # @action(detail=False, methods=["POST"])
     # def change_username(self, request):

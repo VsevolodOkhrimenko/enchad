@@ -316,8 +316,6 @@ class MessageViewSet(viewsets.ViewSet,
             message.save()
             thread.modified = timezone.now()
             thread.save()
-            response = Response(self.serializer_class(message).data)
-        else:
-            response = Response(serializer_target.errors,
-                                status=status.HTTP_400_BAD_REQUEST)
-        return response
+            return Response(self.serializer_class(message).data)
+        return Response(serializer_target.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
