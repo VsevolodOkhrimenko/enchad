@@ -1,10 +1,11 @@
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.mixins import (RetrieveModelMixin, DestroyModelMixin)
+from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ViewSet
 from chat.utils.helpers import generate_16_hash_code
+from config.throttling import OncePerDayUserThrottle, TenPerMinuteUserThrottle
 from .serializers import UserSerializer
 
 User = get_user_model()
@@ -13,13 +14,22 @@ User = get_user_model()
 PASSSWOR_MIN_LEN = 8
 
 
-class UserViewSet(RetrieveModelMixin, DestroyModelMixin,
+class UserViewSet(RetrieveModelMixin,
+                  ViewSet,
                   GenericViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(id=self.request.user.id)
+
+    def get_throttles(self):
+        throttle_classes = []
+        if self.action == 'change_password':
+            throttle_classes = [TenPerMinuteUserThrottle]
+        elif self.action == 'reset_lookup_id':
+            throttle_classes = [OncePerDayUserThrottle]
+        return [throttle() for throttle in throttle_classes]
 
     def destroy(self, request, pk=None):
         issuer = request.user
@@ -73,20 +83,20 @@ class UserViewSet(RetrieveModelMixin, DestroyModelMixin,
             'password': ['Incorrect password']},
             status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["POST"])
-    def change_username(self, request):
-        issuer = request.user
-        password = request.data['password']
-        if issuer.check_password(password):
-            username = request.data['username']
-            if User.objects.filter(username__iexact=username).exists():
-                return Response({
-                            'username': ['This username already taken']},
-                            status=status.HTTP_400_BAD_REQUEST)
-            issuer.username = username
-            issuer.save()
-            return Response({
-                'message': 'Username successfully changed'})
-        return Response({
-            'password': ['Incorrect password']},
-            status=status.HTTP_400_BAD_REQUEST)
+    # @action(detail=False, methods=["POST"])
+    # def change_username(self, request):
+    #     issuer = request.user
+    #     password = request.data['password']
+    #     if issuer.check_password(password):
+    #         username = request.data['username']
+    #         if User.objects.filter(username__iexact=username).exists():
+    #             return Response({
+    #                         'username': ['This username already taken']},
+    #                         status=status.HTTP_400_BAD_REQUEST)
+    #         issuer.username = username
+    #         issuer.save()
+    #         return Response({
+    #             'message': 'Username successfully changed'})
+    #     return Response({
+    #         'password': ['Incorrect password']},
+    #         status=status.HTTP_400_BAD_REQUEST)

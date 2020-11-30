@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from chat.utils.helpers import validate_uuid4_array
 from chat.messaging.models import Thread, Message
+from config.throttling import OncePerSecondUserThrottle
 from .serializers import ThreadSerializer, MessageSerializer
 
 
@@ -45,15 +46,18 @@ class ThreadPagination(LimitOffsetPagination):
         })
 
 
-class ThreadViewSet(mixins.CreateModelMixin,
-                    mixins.RetrieveModelMixin,
-                    mixins.DestroyModelMixin,
+class ThreadViewSet(viewsets.ViewSet,
                     mixins.ListModelMixin,
-                    mixins.UpdateModelMixin,
                     viewsets.GenericViewSet):
     serializer_class = ThreadSerializer
     pagination_class = ThreadPagination
     permission_classes = (IsAuthenticated,)
+
+    def get_throttles(self):
+        throttle_classes = []
+        if self.action == 'create' or self.action == 'list':
+            throttle_classes = [OncePerSecondUserThrottle]
+        return [throttle() for throttle in throttle_classes]
 
     def get_queryset(self):
         return Thread.objects.filter(
@@ -219,14 +223,18 @@ class MessagePagination(LimitOffsetPagination):
         })
 
 
-class MessageViewSet(mixins.CreateModelMixin,
-                     mixins.DestroyModelMixin,
-                     mixins.ListModelMixin,
+class MessageViewSet(viewsets.ViewSet,
                      viewsets.GenericViewSet):
     serializer_class = MessageSerializer
     pagination_class = MessagePagination
     permission_classes = (IsAuthenticated,)
     queryset = Message.objects.none()
+
+    def get_throttles(self):
+        throttle_classes = []
+        if self.action == 'create' or self.action == 'list':
+            throttle_classes = [OncePerSecondUserThrottle]
+        return [throttle() for throttle in throttle_classes]
 
     def list(self, request):
         thread_id = request.GET.get('thread_id', None)
