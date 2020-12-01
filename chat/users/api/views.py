@@ -113,21 +113,3 @@ class UserViewSet(RetrieveModelMixin,
             return Response({'token': token.key})
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
-
-    # @action(detail=False, methods=["POST"])
-    # def change_username(self, request):
-    #     issuer = request.user
-    #     password = request.data['password']
-    #     if issuer.check_password(password):
-    #         username = request.data['username']
-    #         if User.objects.filter(username__iexact=username).exists():
-    #             return Response({
-    #                         'username': ['This username already taken']},
-    #                         status=status.HTTP_400_BAD_REQUEST)
-    #         issuer.username = username
-    #         issuer.save()
-    #         return Response({
-    #             'message': 'Username successfully changed'})
-    #     return Response({
-    #         'password': ['Incorrect password']},
-    #         status=status.HTTP_400_BAD_REQUEST)
