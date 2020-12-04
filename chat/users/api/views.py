@@ -1,10 +1,15 @@
 from django.contrib.auth import get_user_model
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from rest_framework import status
-from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ViewSet
+from chat.users.models import account_activation_token
 from chat.utils.helpers import generate_16_hash_code
 from config.throttling import OncePerDayUserThrottle, TenPerMinuteUserThrottle
 from .serializers import UserSerializer
@@ -93,7 +98,7 @@ class UserViewSet(RetrieveModelMixin,
         password = request.data['password']
         password2 = request.data['password2']
         email = request.data['email']
-        username = request.data['email']
+        username = request.data['username']
         if password != password2:
             return Response({
                 'password': ['Passwords are not equal'],
@@ -109,7 +114,23 @@ class UserViewSet(RetrieveModelMixin,
             data={'username': username, 'password': password, 'email': email})
         if serializer.is_valid():
             user = serializer.save()
-            token = Token.objects.create(user=user)
-            return Response({'token': token.key})
+            user.is_active = False
+            user.save()
+            current_site = get_current_site(request)
+            mail_subject = 'Activate your EnChad account.'
+            message = render_to_string('acc_active_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+                'token': account_activation_token.make_token(user),
+            })
+            to_email = email
+            email_message = EmailMessage(
+                        mail_subject, message, to=[to_email]
+            )
+            email_message.send()
+            return Response({
+                'message': '''Please confirm your email address to complete
+                              the registration'''})
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)

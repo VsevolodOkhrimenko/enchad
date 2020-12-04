@@ -206,6 +206,8 @@ CSRF_COOKIE_HTTPONLY = False
 SECURE_BROWSER_XSS_FILTER = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
 X_FRAME_OPTIONS = "DENY"
+# https://docs.djangoproject.com/en/dev/ref/settings/#password-reset-timeout-days
+PASSWORD_RESET_TIMEOUT_DAYS = 1
 
 # EMAIL
 # ------------------------------------------------------------------------------
