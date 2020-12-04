@@ -1,12 +1,13 @@
 from django.conf import settings
 from django.urls import include, path, re_path
+from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.views import defaults as default_views
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic import TemplateView
 from chat.users.forms import AuthenticationFormWithCaptchaV3
-from chat.users.views import obtain_expiring_auth_token
+from chat.users.views import obtain_expiring_auth_token, activate
 
 
 admin.autodiscover()
@@ -15,6 +16,8 @@ admin.site.login_form = AuthenticationFormWithCaptchaV3
 
 urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
+    url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        activate, name='activate')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
