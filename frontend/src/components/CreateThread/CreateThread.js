@@ -33,7 +33,7 @@ const CreateThread = () => {
       setIsLoading(false)
     }).catch(err => {
       setIsLoading(false)
-      if (error.response) {
+      if (err.response) {
         dispatch(checkErrorStatus(err.response.status))
         if (err.response.status === 302) {
           setError(null)
