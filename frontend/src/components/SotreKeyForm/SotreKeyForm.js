@@ -1,4 +1,3 @@
-import './SotreKeyForm.scss'
 import {
   Button,
   TextField,
@@ -17,6 +16,7 @@ import { enableKeysModal, enableThreadsSidebar } from 'utils/common/actions'
 import { updateKeyPair } from 'utils/messaging/actions'
 import Loader from 'components/Loader'
 import Config from 'config'
+import useStyles from './styles'
 
 
 const { passwordMinSize } = Config.encryption
@@ -28,6 +28,7 @@ const SotreKeyForm = (props) => {
 
   const dispatch = useDispatch()
   const isMobile = checkMobile()
+  const classes = useStyles()
   const encryptionError = useSelector(state => state.encryption.encryptionError)
   const encryptionLoading = useSelector(state => state.encryption.encryptionLoading)
   const [passwordError, setPasswordError] = useState(null)
@@ -67,9 +68,9 @@ const SotreKeyForm = (props) => {
   return (
     <div className='form key-form'>
       { encryptionLoading ? <Loader /> : null }
-      { encryptionError ? <p className='error-message'>{encryptionError}</p> : null}
+      { encryptionError ? <p className={classes.errorMessage}>{encryptionError}</p> : null}
       <form onSubmit={storeKeySubmit}>
-        <div className='private-key-accordion'>
+        <div className={classes.privateKeyAccordion}>
           <Accordion>
             <AccordionSummary
               expandIcon={<ExpandMore />}
@@ -78,6 +79,7 @@ const SotreKeyForm = (props) => {
             </AccordionSummary>
             <AccordionDetails>
               <TextField
+                variant='filled'
                 fullWidth
                 multiline
                 name='privateKey'
@@ -90,6 +92,7 @@ const SotreKeyForm = (props) => {
         </div>
         <div>
           <TextField
+            variant='filled'
             fullWidth
             autoFocus={true}
             label='Create password'
@@ -111,6 +114,7 @@ const SotreKeyForm = (props) => {
         </div>
         <div>
           <TextField
+            variant='filled'
             fullWidth
             error={!!passwordError}
             helperText={passwordError}
@@ -131,7 +135,7 @@ const SotreKeyForm = (props) => {
             }}
           />
         </div>
-        <div className='submit-form-btn'>
+        <div className={classes.submitFormBtn}>
           <Button
             type='submit'
             variant='contained'

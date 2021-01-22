@@ -1,4 +1,3 @@
-import './Navbar.scss'
 import {
   IconButton,
   AppBar,
@@ -19,9 +18,11 @@ import {
   enableSettingsSidebar,
   enableDarkTheme
 } from 'utils/common/actions'
+// import useStyles from './styles'
 
 const Navbar = () => {
   const dispatch = useDispatch()
+  // const classes = useStyles()
   const showThreadsSidebar = useSelector(state => state.common.showThreadsSidebar)
   const showSettingsSidebar = useSelector(state => state.common.showSettingsSidebar)
   const unreadCount = useSelector(state => state.messaging.unreadCount)
@@ -48,7 +49,7 @@ const Navbar = () => {
             aria-label='theme'
             onClick={() => dispatch(enableDarkTheme(!useDarkTheme))}
           >
-            { useDarkTheme ? <Brightness4 /> : <Brightness7 /> }
+            { useDarkTheme ? <Brightness7 /> : <Brightness4 /> }
           </IconButton>
           <IconButton
             color='inherit'

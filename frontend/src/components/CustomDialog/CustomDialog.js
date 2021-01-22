@@ -1,4 +1,3 @@
-import './CustomDialog.scss'
 import React from 'react'
 import {
   AppBar,
@@ -13,6 +12,7 @@ import {
 import { Close } from '@material-ui/icons'
 import { checkMobile } from 'helpers/common'
 import Loader from 'components/Loader'
+import useStyles from './styles'
 
 
 const CustomDialog = (props) => {
@@ -28,6 +28,7 @@ const CustomDialog = (props) => {
   } = props
 
   const isMobile = checkMobile()
+  const classes = useStyles()
 
   return (
     <Dialog
@@ -57,11 +58,11 @@ const CustomDialog = (props) => {
           </IconButton>
         </Toolbar>
       </AppBar>
-      <DialogContent>
+      <DialogContent className={classes.dialogContent}>
         { children ? children : null}
         {
           action ?
-            <DialogActions>
+            <DialogActions className={classes.dialogActions}>
               <Button
                 type='submit'
                 onClick={action}

@@ -1,4 +1,3 @@
-import './Settings.scss'
 import React from 'react'
 import {
   SwipeableDrawer,
@@ -26,6 +25,7 @@ import ExportPrivateKey from 'components/ExportPrivateKey'
 import ChangePassword from 'components/ChangePassword'
 import ChangeUsername from 'components/ChangeUsername'
 import history from 'browserHistory'
+import useStyles from './styles'
 
 
 const Settings = () => {
@@ -34,6 +34,7 @@ const Settings = () => {
   const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent)
   const isMobile = checkMobile()
   const dispatch = useDispatch()
+  const classes = useStyles()
   const showSettingsSidebar = useSelector(state => state.common.showSettingsSidebar)
   const activePrivateKey = useSelector(state => state.encryption.activePrivateKey)
 
@@ -48,7 +49,7 @@ const Settings = () => {
       disableDiscovery={iOS && !isMobileApp}
       disableSwipeToOpen={!isMobileApp}
       classes={{
-        paper: `settings-sidebar ${isMobile ? 'mobile' : ''}`
+        paper: `${classes.settingsSidebar} ${isMobile ? 'mobile' : ''}`
       }}
     >
       <List>
@@ -62,6 +63,7 @@ const Settings = () => {
             { activePrivateKey ? <ExportPrivateKey /> : null}
             <ListItem
               button
+              divider
               onClick={
                 () => {
                   dispatch(resetMessages())
@@ -75,6 +77,7 @@ const Settings = () => {
             </ListItem>
             <ListItem
               button
+              divider
               onClick={
                 () => {
                   dispatch(resetMessages())
@@ -90,7 +93,7 @@ const Settings = () => {
         : null }
         <ChangeUsername />
         <ChangePassword />
-        <ListItem button onClick={() => dispatch(resetAuthToken())}>
+        <ListItem divider button onClick={() => dispatch(resetAuthToken())}>
           <ListItemIcon><ExitToApp /></ListItemIcon>
           <ListItemText primary='Logout' />
         </ListItem>

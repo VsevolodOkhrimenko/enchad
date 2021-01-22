@@ -1,4 +1,3 @@
-import './OpenKeyForm.scss'
 import {
   Button,
   TextField,
@@ -13,6 +12,7 @@ import { enableKeysModal, enableThreadsSidebar } from 'utils/common/actions'
 import { setDecryptedKeyPair, setEncryptionError } from 'utils/encryption/actions'
 import { getMessages } from 'utils/messaging/actions'
 import Config from 'config'
+import useStyles from './styles'
 
 
 const { passwordMinSize } = Config.encryption
@@ -23,6 +23,7 @@ const OpenKeyForm = (props) => {
   } = props
 
   const dispatch = useDispatch()
+  const classes = useStyles()
   const [passwordError, setPasswordError] = useState(null)
   const [showPassword, setShowPassword] = useState(false)
   const encryptionError = useSelector(state => state.encryption.encryptionError)
@@ -68,10 +69,11 @@ const OpenKeyForm = (props) => {
 
   return (
     <div className='form key-form'>
-      { encryptionError ? <p className='error-message'>{encryptionError}</p> : null}
+      { encryptionError ? <p className={classes.errorMessage}>{encryptionError}</p> : null}
       <form onSubmit={openKeySubmit}>
         <div>
           <TextField
+            variant='filled'
             error={!!passwordError || !!encryptionError}
             helperText={passwordError}
             label='Password'
@@ -93,7 +95,7 @@ const OpenKeyForm = (props) => {
             }}
           />
         </div>
-        <div className='submit-form-btn'>
+        <div className={classes.submitFormBtn}>
           <Button
             type='submit'
             variant='contained'

@@ -28,7 +28,7 @@ import useStyles from './styles'
 
 const { backendUrl } = Config.network
 
-const LoginPage = () => {
+const SignUpPage = () => {
   const dispatch = useDispatch()
   const classes = useStyles()
   const useDarkTheme = useSelector(state => state.common.useDarkTheme)
@@ -120,7 +120,7 @@ const LoginPage = () => {
                         onClick={handleClickShowPassword}
                         tabIndex='-1'
                       >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
                       </IconButton>
                     </InputAdornment>
                 }}
@@ -135,9 +135,8 @@ const LoginPage = () => {
               }
               label='Remember me'
             />
-            <div className={classes.submitFormBtnWrapper}>
+            <div className={classes.submitFormBtn}>
               <Button
-                className={classes.loginBtn}
                 type='submit'
                 variant='contained'
                 color='primary'
@@ -152,4 +151,4 @@ const LoginPage = () => {
   )
 }
 
-export default LoginPage
+export default SignUpPage

@@ -1,4 +1,3 @@
-import './ChangePassword.scss'
 import React, { useState, useReducer, useRef } from 'react'
 import {
   ListItem,
@@ -20,6 +19,7 @@ import { checkErrorStatus, setSnackbar } from 'utils/common/actions'
 import { formReducer, getFieldError } from 'helpers/forms'
 import CustomDialog from 'components/CustomDialog'
 import Config from 'config'
+// import useStyles from './styles'
 
 const initFormsState = {
   errors: {}
@@ -28,6 +28,7 @@ const initFormsState = {
 const ChangePassword = () => {
   const { backendUrl } = Config.network
   const dispatch = useDispatch()
+  // const classes = useStyles()
   const [formErrors, dispatchFormErrors] = useReducer(formReducer, initFormsState)
   const [showDialog, setShowDialog] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -92,7 +93,7 @@ const ChangePassword = () => {
 
   return (
     <>
-    <ListItem button onClick={() => setShowDialog(true)} >
+    <ListItem divider button onClick={() => setShowDialog(true)} >
       <ListItemIcon><Lock /></ListItemIcon>
       <ListItemText primary='Change user password' />
     </ListItem>
@@ -108,6 +109,7 @@ const ChangePassword = () => {
       <form onSubmit={changePasswordSubmit} ref={formRef} >
         <div>
           <TextField
+            variant='filled'
             error={!!getFieldError(formErrors, 'password')}
             helperText={getFieldError(formErrors, 'password')}
             label='Current password'
@@ -130,6 +132,7 @@ const ChangePassword = () => {
         </div>
         <div>
           <TextField
+            variant='filled'
             error={!!getFieldError(formErrors, 'new_password')}
             helperText={getFieldError(formErrors, 'new_password')}
             label='New password'
@@ -152,6 +155,7 @@ const ChangePassword = () => {
         </div>
         <div>
           <TextField
+            variant='filled'
             error={!!getFieldError(formErrors, 'new_password2')}
             helperText={getFieldError(formErrors, 'new_password2')}
             label='Confirm new password'

@@ -1,4 +1,3 @@
-import './MessagingPage.scss'
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,12 +10,14 @@ import Navbar from 'components/Navbar'
 import Settings from 'components/Settings'
 import messagingConnection, { closeWebsocketConnection } from 'utils/messaging/messagingConnection'
 import { getUserInfo } from 'utils/auth/actions'
+import useStyles from './styles'
 
 
 const MessagingPage = () => {
   const dispatch = useDispatch()
   const { thread_id } = useParams()
   const isMobile = checkMobile()
+  const classes = useStyles()
   const authToken = useSelector(state => state.auth.authToken)
   const showThreadsSidebar = useSelector(state => state.common.showThreadsSidebar)
   const showSettingsSidebar = useSelector(state => state.common.showSettingsSidebar)
@@ -35,8 +36,8 @@ const MessagingPage = () => {
       <Threads />
       <div
         className={
-          `content ${showThreadsSidebar && !isMobile ? 'threads-open' : ''}
-          ${showSettingsSidebar && !isMobile ? 'settings-open' : ''}`
+          `${classes.content} ${showThreadsSidebar && !isMobile ? classes.threadsOpen : ''}
+          ${showSettingsSidebar && !isMobile ? classes.settingsOpen : ''}`
         }
       >
         <Navbar />

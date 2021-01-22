@@ -1,4 +1,3 @@
-import './SendMessage.scss'
 import axios from 'axios'
 import React, { useState } from 'react'
 import {
@@ -14,11 +13,13 @@ import { checkErrorStatus, setSnackbar } from 'utils/common/actions'
 import { appendMessage } from './actions'
 import Loader from 'components/Loader'
 import Config from 'config'
+import useStyles from './styles'
 
 
 const SendMessage = () => {
   const { thread_id } = useParams()
   const dispatch = useDispatch()
+  const classes = useStyles()
   const { backendUrl } = Config.network
   const activePublicKey = useSelector(state => state.encryption.activePublicKey)
   const activeOpponentPublicKey = useSelector(state => state.encryption.activeOpponentPublicKey)
@@ -76,7 +77,7 @@ const SendMessage = () => {
   }
 
   return (
-    <form id='messagesForm' onSubmit={ isLoading ? null : sendMessageSubmit } >
+    <form id='messagesForm' className={classes.messagesForm} onSubmit={ isLoading ? null : sendMessageSubmit } >
       { isLoading ?
         <Loader /> : null
       }

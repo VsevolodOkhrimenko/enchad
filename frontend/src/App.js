@@ -1,14 +1,17 @@
-import React, { useEffect } from 'react'
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
+import React, { useEffect, useMemo } from 'react'
+import { ThemeProvider } from '@material-ui/core/styles'
 import { Paper, Snackbar } from '@material-ui/core'
+import CssBaseline from '@material-ui/core/CssBaseline'
 import {
   ErrorOutline,
   CheckCircleOutlineOutlined,
   WarningOutlined
 } from '@material-ui/icons'
+import { getTheme } from 'theme'
 import { useSelector, useDispatch } from 'react-redux'
 import Routes from 'routes'
 import { closeSnackbar } from 'utils/common/actions'
+
 
 
 
@@ -29,11 +32,10 @@ const App = () => {
     }
   }, [useDarkTheme])
 
-  const theme = createMuiTheme({
-      palette: {
-        type: useDarkTheme ? 'dark' : 'light'
-      }
-    })
+  const theme = useMemo(
+    () => getTheme(useDarkTheme ? 'dark' : 'light'),
+    [useDarkTheme],
+  )
 
   function snackbarIcon(type) {
     switch (type) {
@@ -48,6 +50,7 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline/>
       <Paper className='app-wrapper' square>
       <Routes authToken={authToken} />
       <Snackbar

@@ -1,16 +1,16 @@
- import './Loader.scss'
 import React from 'react'
-import { useTheme } from '@material-ui/core/styles'
+import useStyles from './styles'
 
 const Loader = () => {
-  const theme = useTheme()
+  const classes = useStyles()
 
   return (
-    <div className='loader-wrapper'>
-      <div
-        className='loader'
-        style={{ borderColor: `${theme.palette.primary.main} transparent ${theme.palette.primary.main} transparent`}}
-      />
+    <div className={classes.loaderWrapper} >
+      <div className={classes.loader}>
+        <div className={classes.loaderSectionOne}></div>
+        <div className={classes.loaderSectionTwo}></div>
+        <div className={classes.loaderSectionThree}></div>
+      </div>
     </div>
   )
 }

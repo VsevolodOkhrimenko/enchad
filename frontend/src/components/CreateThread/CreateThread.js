@@ -1,4 +1,3 @@
-import './CreateThread.scss'
 import {
   TextField,
   InputAdornment,
@@ -13,9 +12,11 @@ import { checkErrorStatus } from 'utils/common/actions'
 import { appendThread } from './actions'
 import Config from 'config'
 import history from 'browserHistory'
+import useStyles from './styles'
 
 const CreateThread = () => {
   const dispatch = useDispatch()
+  const classes = useStyles()
   const { backendUrl } = Config.network
   const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -66,9 +67,10 @@ const CreateThread = () => {
   }
 
   return (
-    <form id='createThread' onSubmit={ isLoading ? null : createThreadSubmit } >
+    <form id='createThread' className={classes.createThread} onSubmit={ isLoading ? null : createThreadSubmit } >
       { isLoading ? <Loader /> : null }
         <TextField
+          variant='filled'
           error={!!error}
           helperText={error}
           fullWidth

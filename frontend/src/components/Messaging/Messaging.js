@@ -1,4 +1,3 @@
-import './Messaging.scss'
 import React, { useEffect } from 'react'
 import { Button } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
@@ -18,11 +17,13 @@ import Loader from 'components/Loader'
 import SotreKeyForm from 'components/SotreKeyForm'
 import OpenKeyForm from 'components/OpenKeyForm'
 import SendMessage from 'components/SendMessage'
+import useStyles from './styles'
 
 
 const Messaging = () => {
   const dispatch = useDispatch()
   const { thread_id } = useParams()
+  const classes = useStyles()
   const messages = useSelector(state => state.messaging.messages)
   const threads = useSelector(state => state.messaging.threads)
   const unreadsByThread = useSelector(state => state.messaging.unreadsByThread)
@@ -88,13 +89,14 @@ const Messaging = () => {
       <div
         id='threadContainer'
         className={
-          `${activeOpponentPublicKey && activePublicKey && encryptedPrivateKey ? 'ready' : ''}`}
+          `${classes.threadContainer} ${activeOpponentPublicKey && activePublicKey && encryptedPrivateKey ? classes.ready : ''}`}
         onScroll={threadScroll}
       >
         { isLoadingMessages && <Loader /> }
+        
 
         { !isLoadingMessages && (!activeOpponentPublicKey || !activePublicKey) ?
-          <div className='chat-not-initiated'>
+          <div className={classes.chatNotInitiated}>
             { !activeOpponentPublicKey && activePublicKey ?
               <p>Target user has to share his public key</p> : null }
             { !activePublicKey ?

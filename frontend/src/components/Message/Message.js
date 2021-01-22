@@ -1,5 +1,5 @@
-import './Message.scss'
 import React from 'react'
+import useStyles from './styles'
 
 
 const Message = (props) => {
@@ -10,9 +10,11 @@ const Message = (props) => {
     senderClass
   } = props
 
+  const classes = useStyles()
+
   return (
-    <div id={id} className={`message-wrapper ${senderClass} ${read ? 'read' : ''}`}>
-      <div className={`message ${text.type}`}>
+    <div id={id} className={`${classes.messageWrapper} ${senderClass === 'owner' ? classes.owner : classes.opponent} ${read ? 'read' : ''}`}>
+      <div className={`message ${classes.message} ${text.type}`}>
         {text.content}
       </div>
     </div>

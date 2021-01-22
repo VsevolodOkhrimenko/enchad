@@ -1,4 +1,3 @@
-import './ShowUserInfo.scss'
 import React, { useState } from 'react'
 import {
   ListItem,
@@ -13,10 +12,12 @@ import { getUserInfo, enableAuthLoader } from 'utils/auth/actions'
 import { checkErrorStatus, setSnackbar } from 'utils/common/actions'
 import CustomDialog from 'components/CustomDialog'
 import Config from 'config'
+// import useStyles from './styles'
 
 const ShowUserInfo = () => {
   const { backendUrl } = Config.network
   const dispatch = useDispatch()
+  // const classes = useStyles()
   const [showDialog, setShowDialog] = useState(false)
   const userLookupId = useSelector(state => state.auth.userLookupId)
   const username = useSelector(state => state.auth.username)
@@ -42,18 +43,18 @@ const ShowUserInfo = () => {
 
   return (
     <>
-    <ListItem button onClick={() => setShowDialog(true)} >
+    <ListItem divider button onClick={() => setShowDialog(true)} >
       <ListItemIcon><PersonPin /></ListItemIcon>
       <ListItemText primary='Show my user info' />
     </ListItem>
     <CustomDialog
-      header="User Info"
+      header='User Info'
       open={showDialog}
       onClose={() => setShowDialog(false)}
       onEnter={() => dispatch(getUserInfo())}
       isLoading={userInfoIsLoading}
       action={resetLookupId}
-      actionText="Reset Search ID"
+      actionText='Reset Search ID'
     >
         <DialogContentText>
           Username: {username}

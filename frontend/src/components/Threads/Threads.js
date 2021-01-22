@@ -1,4 +1,3 @@
-import './Threads.scss'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import {
@@ -19,6 +18,7 @@ import Loader from 'components/Loader'
 import CreateThread from 'components/CreateThread'
 import { setThreads } from './actions'
 import Config from 'config'
+import useStyles from './styles'
 
 
 const Threads = () => {
@@ -28,6 +28,7 @@ const Threads = () => {
   const dispatch = useDispatch()
   const { thread_id } = useParams()
   const isMobile = checkMobile()
+  const classes = useStyles()
   const threads = useSelector(state => state.messaging.threads)
   const unreadsByThread = useSelector(state => state.messaging.unreadsByThread)
   const userId = useSelector(state => state.auth.userId)
@@ -101,12 +102,12 @@ const Threads = () => {
       disableDiscovery={iOS && !isMobileApp}
       disableSwipeToOpen={!isMobileApp}
       classes={{
-        paper: `threads-sidebar ${isMobile ? 'mobile' : ''}`
+        paper: `${classes.threadsSidebar} ${isMobile ? 'mobile' : ''}`
 
       }}
     >
       <List disablePadding>
-        <ListItem className="close-drawer" button onClick={() => dispatch(enableThreadsSidebar(false))}>
+        <ListItem className={classes.closeDrawer} button onClick={() => dispatch(enableThreadsSidebar(false))}>
           <ListItemIcon><KeyboardArrowLeft /></ListItemIcon>
         </ListItem>
         <Divider />
@@ -114,9 +115,9 @@ const Threads = () => {
           <CreateThread />
         </ListItem>
         <Divider />
-        <div id='threadsList' onClick={isMobile ? () => dispatch(enableThreadsSidebar(false)) : null} onScroll={ threadsListScroll }>
+        <div id='threadsList' className={classes.threadsList} onClick={isMobile ? () => dispatch(enableThreadsSidebar(false)) : null} onScroll={ threadsListScroll }>
           { isLoading ? <Loader /> : null }
-          { error ? <p className='error-message'>{error}</p> : null }
+          { error ? <p className={classes.errorMessage}>{error}</p> : null }
           {renderThreads()}
         </div>
       </List>

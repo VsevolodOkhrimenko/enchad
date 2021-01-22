@@ -34,9 +34,8 @@
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
-    "axios": "0.19.2",
+    "axios": "^0.21.1",
     "envify": "^4.1.0",
-    "node-sass": "4.13.1",
     "react-document-title": "2.0.3",
     "react-router-dom": "5.1.2",
     "terser": "^5.5.0",

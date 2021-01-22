@@ -1,4 +1,3 @@
-import './Thread.scss'
 import {
   ListItem,
   ListItemText,
@@ -6,6 +5,7 @@ import {
 } from '@material-ui/core'
 import React from 'react'
 import history from 'browserHistory'
+import useStyles from './styles'
 
 
 const Thread = (props) => {
@@ -16,12 +16,15 @@ const Thread = (props) => {
     selected
   } = props
 
+  const classes = useStyles()
+
   return (
     <ListItem
       onClick={() => history.push(`/${id}`)}
       button
-      className='thread-item'
+      className={classes.threadItem}
       selected={selected}
+      divider
     >
       <Badge badgeContent={unreadCount} color='secondary'>
         <ListItemText primary={`Chat with ${opponent.username}`} />

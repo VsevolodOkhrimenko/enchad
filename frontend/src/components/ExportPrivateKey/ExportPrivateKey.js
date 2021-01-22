@@ -1,4 +1,3 @@
-import './ExportPrivateKey.scss'
 import React, { useState } from 'react'
 import {
   ListItem,
@@ -11,9 +10,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { exportPrivateKey } from 'helpers/encryption'
 import { setSnackbar } from 'utils/common/actions'
 import CustomDialog from 'components/CustomDialog'
+// import useStyles from './styles'
 
 const ExportPrivateKey = () => {
   const dispatch = useDispatch()
+  // const classes = useStyles()
   const [showDialog, setShowDialog] = useState(false)
   const [error, setError] = useState(false)
   const activePrivateKey = useSelector(state => state.encryption.activePrivateKey)
@@ -43,6 +44,7 @@ const ExportPrivateKey = () => {
     >
       { error ? <p className='user-info-error'>{error}</p> : null }
       <TextField
+        variant='filled'
         multiline
         name='privateKey'
         label='Private key'
